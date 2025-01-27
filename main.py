@@ -1,10 +1,10 @@
-import eel
-import time
-from waveform import State, Tab, WF_Block_Collection, WF_Block_Constant, WF_Block_PUND, WF_Block_Sine
+import eel, json, time, pprint
+from waveform import State, Tab, WF_Block_Base, WF_Block_Collection, WF_Block_Constant, WF_Block_PUND, WF_Block_Sine
 
 
 eel.init('web')
 state = State()
+waveform_classes = {cls.__name__:cls for cls in WF_Block_Base._get_all_subclasses()} # used for creating new waveform blocks
 
 @eel.expose
 def py_new_tab(id, name):
@@ -12,7 +12,7 @@ def py_new_tab(id, name):
     state.add_child(tab)
     tab.add_child(WF_Block_Collection()) # CH1
     tab.add_child(WF_Block_Collection()) # CH2
-    
+
 @eel.expose
 def py_close_tab(id):
     state.remove_child_by_id(id)
@@ -26,14 +26,7 @@ def py_delete_wf_block(tabId:str, channel:int, blockIdx:int):
 def py_new_wf_block(tabId:str, channel:int, block_type:str):
     tab = state.find_child_by_id(tabId)
     collection = tab[channel-1]
-    if block_type == 'pund':
-        collection.add_child( WF_Block_PUND(amplitude=1.0, rise_time=350e-6, delay_time=350e-6, n_cycles=4., offset=0.) )
-    elif block_type == 'sine':
-        collection.add_child( WF_Block_Sine(amplitude=1.0, phase=0, freq=1000, n_cycles=4., offset=0.) )
-    elif block_type == 'flat':
-        collection.add_child( WF_Block_Constant(value=0.0, duration=1e-3) )
-    else:
-        raise NotImplementedError(f'Block of type {block_type} not supported.')
+    collection.add_child( waveform_classes[block_type]() )
 
 @eel.expose
 def py_get_wf_block_settings(tabId:str, channel:int, blockIdx:int):
@@ -76,5 +69,13 @@ def py_trigger():
     print('In trigger!')
     return 0
 
+def close():
+    d = state.to_dict()
+    print('State:')
+    pprint.pprint(d)
+    ofname = f'./.states/app-state-{time.time()}.json'
+    with open(ofname, 'w') as f:
+        json.dump(d, f, indent=4)
+    print(f'State saved to {ofname}')
 
-eel.start('main.html', close_callback=lambda e1,e2: print(state.to_dict()))
+eel.start('main.html', close_callback=lambda e1,e2: close())

@@ -2,10 +2,20 @@ $(document).ready(function() {
 
 // Add new tab
 $('#add-tab').click(function() {
-    const tabName = prompt('Enter a name for the new tab:');
-    if (!tabName) return;
+    let msg = 'Enter a name for the new tab:'
+    let tabName, newTabId
+    while (true) {
+        tabName = prompt(msg);
+        newTabId = tabName.replace(/\s+/g, '-').toLowerCase();
+        if (!tabName) {return;}
+        else if (/^[A-Za-z][A-Za-z0-9-_]*$/.test(newTabId)) {
+            break;
+        }
+        else {
+            msg = `Invalid name ${tabName} (produced id ${newTabId}).\nEnter a name for the new tab:`;
+        }
+    }
 
-    const newTabId = tabName.replace(/\s+/g, '-').toLowerCase();
 
     // Add new tab
     $(`
@@ -94,6 +104,7 @@ $('#tab-content').on('click', '.waveform-block i.edit-waveform-block', async fun
     };
     popup.css('display', 'flex');
 
+    // Tie popup actions to this particular block
     popup.find('.accept-waveform-parameters').off('click')
     popup.find('.accept-waveform-parameters').on('click', async function() {
         console.log(blockSettings)
@@ -105,6 +116,7 @@ $('#tab-content').on('click', '.waveform-block i.edit-waveform-block', async fun
         console.log(blockSettings)
         await eel.py_set_wf_block_settings(tabId, channel, blockIdx, blockSettings)();
         await refresh_wf_preview(tabId);
+        popup.css('display', 'none');
     })
 });
 

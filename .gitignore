@@ -6,6 +6,7 @@
 
 # Custom ignore
 temp/*
+.states/*
 # Ignore microsoft office temp files (they always start with ~$)
 ~$*
 

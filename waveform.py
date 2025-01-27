@@ -85,6 +85,7 @@ class WF_Block_Base(State):
 class WF_Block_PUND(WF_Block_Base):
     '''A PUND waveform. Equivalent to making the amplitude negative.
     Cannot have children.'''
+    _selector = 'pund'
     def to_dict(self):
         return dict(_type=self.__class__.__name__, 
                     amplitude=self.amplitude, 
@@ -92,7 +93,7 @@ class WF_Block_PUND(WF_Block_Base):
                     delay_time=self.delay_time, 
                     n_cycles=self.n_cycles, 
                     offset=self.offset)
-    def __init__(self, amplitude:float, rise_time:float, delay_time:float, n_cycles:float, offset:float):
+    def __init__(self, amplitude:float=1.0, rise_time:float=350e-6, delay_time:float=350e-6, n_cycles:float=4., offset:float=0.):
         self.amplitude = amplitude
         self.rise_time = rise_time
         self.delay_time = delay_time
@@ -136,7 +137,7 @@ class WF_Block_Sine(WF_Block_Base):
                     n_cycles=self.n_cycles,
                     offset=self.offset,
                     phase=self.phase)
-    def __init__(self, amplitude:float, freq:float, n_cycles:float, offset:float, phase:float):
+    def __init__(self, amplitude:float=1.0, freq:float=1000, n_cycles:float=4., offset:float=0., phase:float=0.):
         self.amplitude = amplitude
         self.freq = freq
         self.n_cycles = n_cycles
@@ -157,7 +158,7 @@ class WF_Block_Constant(WF_Block_Base):
         return dict(_type=self.__class__.__name__, 
                     value=self.value,
                     duration=self.duration)
-    def __init__(self, value:float, duration:float):
+    def __init__(self, value:float=0, duration:float=1e-3):
         self.value = value
         self.duration= duration
     def get_skeleton(self):
@@ -173,8 +174,8 @@ class WF_Block_Arbitrary(WF_Block_Base):
         return dict(_type=self.__class__.__name__, 
                     values=self.values,
                     init_sample_rate=self.init_sample_rate)
-    def __init__(self, values:np.ndarray, init_sample_rate:float):
-        self.values = values
+    def __init__(self, values:np.ndarray=[], init_sample_rate:float=1):
+        self.values = np.array(values)
         self.init_sample_rate = init_sample_rate
     def get_skeleton(self):
         return self.get_time_array(self.init_sample_rate), self.sample_wf(self.init_sample_rate)
@@ -209,6 +210,13 @@ class WF_Block_Collection(WF_Block_Base):
     def add_child(self, child:WF_Block_Base):
         assert isinstance(child, WF_Block_Base), f'Expected a child instance of WF_Block_Base, but got {type(child)}!'
         super(WF_Block_Base, self).add_child(child) # do not use WF_Block_Base's add_child method (which will just raise an error). Use State's.
+
+
+# TODO
+class WF_Block_Triangle(WF_Block_Base):
+    pass
+class WF_Block_Square(WF_Block_Base):
+    pass
 
 
 if __name__ == '__main__':
