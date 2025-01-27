@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tab Template</title>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-8 column">
+                <h3>AWG</h3>
+                <div class="row">
+                    <div class="col-md-6 column">
+                        <h4>CH1</h4>
+                        <div class="waveform-block-wrapper">
+                            <!-- Blocks will be added here -->
+                        </div>
+                        <div class="form-group">
+                            <select class="form-control" value="none"  data-channel="awg-ch1">
+                                <option value="none">Add Block</option>
+                                <option value="csv">Load from CSV</option>
+                                <option value="pund">PUND</option>
+                                <option value="sine">Sine</option>
+                                <option value="square">Square</option>
+                                <option value="flat">Flat</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6 column">
+                        <h4>CH2</h4>
+                        <div class="waveform-block-wrapper">
+                            <!-- Blocks will be added here -->
+                        </div>
+                        <div class="form-group">
+                            <select class="form-control" value="none"  data-channel="awg-ch2">
+                                <option value="none">Add Block</option>
+                                <option value="csv">Load from CSV</option>
+                                <option value="pund">PUND</option>
+                                <option value="sine">Sine</option>
+                                <option value="square">Square</option>
+                                <option value="flat">Flat</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 column">
+                <h3>Oscilloscope</h3>
+                <div class="row">
+                    <div class="col-md-6 column">
+                        <h4>CH1</h4>
+                    </div>
+                    <div class="col-md-6 column">
+                        <h4>CH2</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- <button class="close-popup-button btn btn-danger">Close Tab</button> -->
+    </div>
+</body>
+</html>
