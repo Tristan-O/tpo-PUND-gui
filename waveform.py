@@ -76,14 +76,14 @@ class WF_Block_Base(State):
     def get_time_array(self, sample_rate:float)->np.ndarray:
         '''Get an array of times corresponding to this block, for the specified sample rate'''
         raise NotImplementedError
-    def sample_wf(self, sample_rate:float):
+    def sample_wf(self, sample_rate:float)->np.ndarray:
         '''Get an array of values corresponding to this block, for the specified sample rate'''
         raise NotImplementedError
     def add_child(self, child):
         raise NotImplementedError
 
 class WF_Block_PUND(WF_Block_Base):
-    '''A PUND waveform. If `ndpu`, multiplies by a -1. Equivalent to making the amplitude negative.
+    '''A PUND waveform. Equivalent to making the amplitude negative.
     Cannot have children.'''
     def to_dict(self):
         return dict(_type=self.__class__.__name__, 
@@ -91,15 +91,27 @@ class WF_Block_PUND(WF_Block_Base):
                     rise_time=self.rise_time, 
                     delay_time=self.delay_time, 
                     n_cycles=self.n_cycles, 
-                    offset=self.offset, 
-                    ndpu=self.ndpu)
-    def __init__(self, amplitude:float, rise_time:float, delay_time:float, n_cycles:float, offset:float, ndpu:bool):
+                    offset=self.offset)
+    def __init__(self, amplitude:float, rise_time:float, delay_time:float, n_cycles:float, offset:float):
         self.amplitude = amplitude
         self.rise_time = rise_time
         self.delay_time = delay_time
         self.n_cycles = n_cycles
         self.offset = offset
-        self.ndpu = ndpu
+    def get_skeleton(self):
+        t = [0]
+        v = [self.offset]
+        for n in np.arange(4*self.n_cycles+1):
+            for t_ in (self.rise_time, self.rise_time, self.delay_time):
+                t.append(t_+t[-1])
+            v.extend( [self.offset+self.amplitude*(-1 if n%4>1 else 1), self.offset, self.offset] )
+        for t_ in t[::-1]:
+            if t_ > self.n_cycles*(4*self.delay_time + 8*self.rise_time):
+                t.pop(-1)
+                v.pop(-1)
+            else:
+                break
+        return np.array(t),np.array(v)
     def get_time_array(self, sample_rate):
         return np.arange(0, self.n_cycles*(4*self.delay_time + 8*self.delay_time), 1/sample_rate)
     def sample_wf(self, sample_rate:float):
@@ -112,7 +124,7 @@ class WF_Block_PUND(WF_Block_Base):
                                                 + quarter_PUND(t, rise_time, rise_time*8+delay_time*4, 1) \
                                                 - quarter_PUND(t, rise_time, rise_time*8+delay_time*4, 2) \
                                                 - quarter_PUND(t, rise_time, rise_time*8+delay_time*4, 3)
-        return self.offset + self.amplitude*pund(time, self.rise_time, self.delay_time)*(-1 if self.ndpu else 1)
+        return self.offset + self.amplitude*pund(time, self.rise_time, self.delay_time)
 
 class WF_Block_Sine(WF_Block_Base):
     '''A sine waveform.
@@ -130,6 +142,9 @@ class WF_Block_Sine(WF_Block_Base):
         self.n_cycles = n_cycles
         self.offset = offset
         self.phase = phase
+    def get_skeleton(self):
+        sample_rate = self.freq*20 # be well above nyquist
+        return self.get_time_array(sample_rate), self.sample_wf(sample_rate)
     def get_time_array(self, sample_rate):
         return np.arange(0, self.n_cycles/self.freq, 1/sample_rate)
     def sample_wf(self, sample_rate):
@@ -145,6 +160,8 @@ class WF_Block_Constant(WF_Block_Base):
     def __init__(self, value:float, duration:float):
         self.value = value
         self.duration= duration
+    def get_skeleton(self):
+        return np.array([0, self.duration]), np.array([self.value]*2)
     def get_time_array(self, sample_rate):
         return np.arange(0, self.duration, 1/sample_rate)
     def sample_wf(self, sample_rate):
@@ -159,9 +176,11 @@ class WF_Block_Arbitrary(WF_Block_Base):
     def __init__(self, values:np.ndarray, init_sample_rate:float):
         self.values = values
         self.init_sample_rate = init_sample_rate
+    def get_skeleton(self):
+        return self.get_time_array(self.init_sample_rate), self.sample_wf(self.init_sample_rate)
     def get_time_array(self, sample_rate):
         return np.arange(0, len(self.values)/self.init_sample_rate, 1/sample_rate)
-    def sample(self, sample_rate:float):
+    def sample_wf(self, sample_rate:float):
         if sample_rate == self.init_sample_rate:
             return self.values
         else:
@@ -171,8 +190,17 @@ class WF_Block_Collection(WF_Block_Base):
     '''This is a special class. It represents a collection of other WF_Block_Base instances.'''
     def __init__(self, *blocks:WF_Block_Base):
         super().__init__()
+        self._children:list[WF_Block_Base]
         for block in blocks:
             self.add_child(child=block)
+    def get_skeleton(self):
+        t = [0]
+        v = []
+        for block in self._children:
+            t_,v_ = block.get_skeleton()
+            t.extend( (t_+t[-1]).tolist() )
+            v.extend( v_.tolist() )
+        return np.array(t[1:]), np.array(v)
     def get_time_array(self, sample_rate:float):
         total_len = np.sum([len(block.get_time_array()) for block in self.blocks])
         return np.arange(0, total_len/sample_rate, 1/sample_rate)
@@ -194,7 +222,7 @@ if __name__ == '__main__':
     pund_tab.add_child(ch2_collection)
     print(state.to_dict())
 
-    d = {'_type': 'State', 'children': [{'name': 'PUND', 'id': 'pund', '_type': 'Tab', 'children': [{'_type': 'WF_Block_Collection', 'children': [{'_type': 'WF_Block_PUND', 'amplitude': 1, 'rise_time': 1, 'delay_time': 1, 'n_cycles': 1, 'offset': 1, 'ndpu': False}, {'_type': 'WF_Block_Sine', 'amplitude': 1, 'freq': 1, 'n_cycles': 1, 'offset': 1, 'phase': 1}]}, {'_type': 'WF_Block_Collection', 'children': []}]}, {'name': 'NDPU', 'id': 'ndpu', '_type': 'Tab', 'children': []}]}
+    d = {'_type': 'State', 'children': [{'name': 'PUND', 'id': 'pund', '_type': 'Tab', 'children': [{'_type': 'WF_Block_Collection', 'children': [{'_type': 'WF_Block_PUND', 'amplitude': -1, 'rise_time': 1, 'delay_time': 1, 'n_cycles': 1, 'offset': 1}, {'_type': 'WF_Block_Sine', 'amplitude': 1, 'freq': 1, 'n_cycles': 1, 'offset': 1, 'phase': 1}]}, {'_type': 'WF_Block_Collection', 'children': []}]}, {'name': 'NDPU', 'id': 'ndpu', '_type': 'Tab', 'children': []}]}
     state = State.from_dict(d)
     print(state._children)
     print(state.to_dict())

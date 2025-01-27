@@ -25,27 +25,35 @@ def py_delete_wf_block(tabId:str, channel:int, blockIdx:int):
 @eel.expose
 def py_new_wf_block(tabId:str, channel:int, block_type:str):
     tab = state.find_child_by_id(tabId)
-    collection = tab[channel]
+    collection = tab[channel-1]
     if block_type == 'pund':
-        collection.add_child( WF_Block_PUND(amplitude=0.0, rise_time=350e-6, delay_time=350e-5, n_cycles=4., offset=0., ndpu=False) )
+        collection.add_child( WF_Block_PUND(amplitude=1.0, rise_time=350e-6, delay_time=350e-6, n_cycles=4., offset=0.) )
     else:
         raise NotImplementedError(f'Block of type {block_type} not supported.')
 
 @eel.expose
 def py_get_wf_block_settings(tabId:str, channel:int, blockIdx:int):
     tab = state.find_child_by_id(tabId)
-    block = tab[channel][blockIdx]
+    block = tab[channel-1][blockIdx]
     res = block.to_dict()
-    # res.pop('_type')
-    # res.pop('children', '')
-    print('Reading current state:', res)
     return res
 @eel.expose
 def py_set_wf_block_settings(tabId:str, channel:int, blockIdx:int, blockSettings:dict):
-    print('Setting new state:', blockSettings)
     tab = state.find_child_by_id(tabId)
-    tab[channel][blockIdx] = tab[channel][blockIdx].__class__.from_dict(blockSettings)
+    print(blockSettings)
+    tab[channel-1][blockIdx] = tab[channel-1][blockIdx].__class__.from_dict(blockSettings)
 
+@eel.expose
+def py_get_wf_skeleton(tabId):
+    tab = state.find_child_by_id(tabId)
+    
+    data = []
+    for ch in range(2):
+        t,v = tab[ch].get_skeleton()
+        data.append({'x':t.tolist(), 'y':v.tolist(), 
+                     'type':'scatter', 'name':f'Ch{ch+1}'}) #plotly structure
+    print(data)
+    return data
 
 @eel.expose
 def py_connect():

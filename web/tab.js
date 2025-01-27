@@ -30,20 +30,7 @@ $('#add-tab').click(function() {
         // Activate new tab
         $(`a[href="#${newTabId}"]`).tab('show');
         
-        // plotly plot
-        var data = [{
-            x: [1, 2, 3],
-            y: [4, 1, 2],
-            type: 'scatter'
-        }];
         
-        // Layout for the plot
-        var layout = {
-            title: 'Plotly Plot'
-        };
-        
-        // Render the plot
-        Plotly.newPlot($(`#${newTabId} .waveform-preview`)[0], data, layout);
     });
 });
 
@@ -59,7 +46,7 @@ $('#tab-list').on('click', '.close-tab-btn', function() {
 
 // Dropdowns add blocks
 $('#tab-content').on('click', 'select.waveform-block-adder', function() {
-    $(this).change(function() {
+    $(this).change( async function() {
         const wfType = $(this).val();
         if (wfType) {
             const tabId = get_enclosing_tab_id($(this));
@@ -68,12 +55,14 @@ $('#tab-content').on('click', 'select.waveform-block-adder', function() {
             const $newBlock = $('<div class="waveform-block"></div>')
 
             $(this).closest('.awg-settings').find('.waveform-block-wrapper').append($newBlock);
-            eel.py_new_wf_block(tabId, channel, wfType);
+            eel.py_new_wf_block(tabId, channel, wfType)();
             $newBlock.load('waveform-block.html', function() {
                 $newBlock.find('.type-waveform-block').text(wfType);
             }); // the things in this function occur AFTER the loading has finished.
                 
             $(this).val(''); // reset selector
+
+            await refresh_wf_preview(tabId);
         }
     });
 });
@@ -105,15 +94,17 @@ $('#tab-content').on('click', '.waveform-block i.edit-waveform-block', async fun
     };
     popup.css('display', 'flex');
 
+    popup.find('.accept-waveform-parameters').off('click')
     popup.find('.accept-waveform-parameters').on('click', async function() {
         console.log(blockSettings)
         for (const [key, value] of Object.entries(blockSettings)) {
             if ($(`#${key}-${wfType}`).length) { // don't change value if key is not an element in the popup, e.g. _type
-                blockSettings[key] = $(`#${key}-${wfType}`).val();
+                blockSettings[key] = parseFloat($(`#${key}-${wfType}`).val());
             }
         };
         console.log(blockSettings)
         await eel.py_set_wf_block_settings(tabId, channel, blockIdx, blockSettings)();
+        await refresh_wf_preview(tabId);
     })
 });
 
@@ -121,5 +112,16 @@ $('#tab-content').on('click', '.waveform-block i.edit-waveform-block', async fun
 function get_enclosing_tab_id($elem) {
     return $elem.closest('.tab-pane').attr('id');
 };
+
+async function refresh_wf_preview(tabId) {
+    let data = await eel.py_get_wf_skeleton(tabId)();
+
+    let layout = {
+        title: 'Waveform Preview'
+    };
+    
+    console.log(data)
+    Plotly.newPlot($(`#${tabId} .waveform-preview`)[0], data, layout);
+}
 
 });
