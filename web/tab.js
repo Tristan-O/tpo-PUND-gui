@@ -98,7 +98,7 @@ $('#tab-content').on('click', '.waveform-block i.edit-waveform-block', async fun
 
     console.log("edit clicked!", tabId, channel, blockIdx, wfType);
     let blockSettings = await eel.py_get_wf_block_settings(tabId, channel, blockIdx)();
-    let popup = $(`#design-${wfType}`);
+    let popup = $(`#editor-${wfType}`);
     for (const [key, value] of Object.entries(blockSettings)) {
         popup.find(`.waveform-parameter[name=${key}]`).val(value);
     };

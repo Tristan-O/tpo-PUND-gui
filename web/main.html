@@ -10,134 +10,133 @@
     <script type="text/javascript" src="/eel.js"></script>
 </head>
 <body>
-    <div class="container">
-        <ul class="nav nav-tabs d-flex" id="tab-list">
-            <!-- new tab li's will go here, e.g.
-                <li class="nav-item">
-                    <a class="nav-link active" data-toggle="tab" href="#tab1">1</a>
-                </li>
-             -->
+  <div class="container">
+    <ul class="nav nav-tabs d-flex" id="tab-list">
+        <!-- new tab li's will go here, e.g.
             <li class="nav-item">
-                <a class="nav-link" id="add-tab" href="#">+</a>
+                <a class="nav-link active" data-toggle="tab" href="#tab1">1</a>
             </li>
-        </ul>
-        <div class="tab-content" id="tab-content">
-            <!-- new tab content will go here, e.g.
-                <div id="tab1" class="tab-pane fade show active">
-                    <div class="tab-content-wrapper">
-                        ...
-                    </div>
-                </div>
-             -->
-        </div>
-        <div class="row">
-            <div class="col-3">
-                <button class="btn btn-primary w-100" id="connect-btn">Connect</button>
-            </div>
-            <div class="col-3">
-                <button class="btn btn-primary w-100" id="upload-btn">Upload</button>
-            </div>
-            <div class="col-3">
-                <button class="btn btn-primary w-100" id="trigger-btn">Trigger</button>
-            </div>
-            <div class="col-3">
-                <button class="btn btn-primary w-100" id="btn-2">2</button>
-            </div>
-        </div>
-
-        <!-- Popup waveform designers -->
-        <div id="design-WF_Block_PUND" class="popup">
-            <div class="popup-content">
-              <h4>Edit PUND Waveform</h4>
-              <form>
-                <div class="form-group">
-                  <label">Amplitude (V)</label>
-                  <input class="waveform-parameter" type="number" name="amplitude">
-                </div>
-                <div class="form-group">
-                  <label>Offset (V)</label>
-                  <input class="waveform-parameter" type="number" name="offset">
-                </div>
-                <div class="form-group">
-                  <label>Rise Time (s)</label>
-                  <input class="waveform-parameter" type="number" name="rise_time">
-                </div>
-                <div class="form-group">
-                  <label>Delay Time (s)</label>
-                  <input class="waveform-parameter" type="number" name="delay_time">
-                </div>
-                <div class="form-group">
-                  <label>Number Cycles</label>
-                  <input class="waveform-parameter" type="number" name="n_cycles">
-                </div>
-              </form>
-              <div class="button-group">
-                <button class="btn btn-primary accept-waveform-parameters">Accept</button>
-                <button class="btn btn-danger close-popup-btn">Cancel</button>
+          -->
+        <li class="nav-item">
+            <a class="nav-link" id="add-tab" href="#">+</a>
+        </li>
+    </ul>
+    <div class="tab-content" id="tab-content">
+        <!-- new tab content will go here, e.g.
+          <div id="tab1" class="tab-pane fade show active">
+              <div class="tab-content-wrapper">
+                  ...
               </div>
-            </div>
           </div>
-
-          <div id="design-WF_Block_Sine" class="popup">
-            <div class="popup-content">
-              <h4>Edit Sine Waveform</h4>
-              <form>
-                <div class="form-group">
-                  <label>Amplitude (V)</label>
-                  <input class="waveform-parameter" type="number" name="amplitude">
-                </div>
-                <div class="form-group">
-                  <label>Offset (V)</label>
-                  <input class="waveform-parameter" type="number" name="offset">
-                </div>
-                <div class="form-group">
-                  <label>Frequency (V)</label>
-                  <input class="waveform-parameter" type="number" name="freq">
-                </div>
-                <div class="form-group">
-                  <label>Number Cycles</label>
-                  <input class="waveform-parameter" type="number" name="n_cycles">
-                </div>
-                <div class="form-group">
-                  <label>Phase (rad)</label>
-                  <input class="waveform-parameter" type="number" name="phase">
-                </div>
-              </form>
-              <div class="button-group">
-                <button class="btn btn-primary accept-waveform-parameters">Accept</button>
-                <button class="btn btn-danger close-popup-btn">Cancel</button>
-              </div>
-            </div>
-          </div>
-
-          <div id="design-WF_Block_Constant" class="popup">
-            <div class="popup-content">
-              <h4>Edit Constant Waveform</h4>
-              <form>
-                <div class="form-group">
-                  <label >Value (V)</label>
-                  <input class="waveform-parameter" type="number" name="value">
-                </div>
-                <div class="form-group">
-                  <label >Duration (s)</label>
-                  <input class="waveform-parameter" type="number" name="duration">
-                </div>
-              </form>
-              <div class="button-group">
-                <button class="btn btn-primary accept-waveform-parameters">Accept</button>
-                <button class="btn btn-danger close-popup-btn">Cancel</button>
-              </div>
-            </div>
-          </div>
-          
-
+        -->
+    </div>
+    <div class="row">
+      <div class="col-3">
+        <button class="btn btn-primary w-100" id="connect-btn">Connect</button>
+      </div>
+      <div class="col-3">
+        <button class="btn btn-primary w-100" id="upload-btn">Upload</button>
+      </div>
+      <div class="col-3">
+        <button class="btn btn-primary w-100" id="trigger-btn">Trigger</button>
+      </div>
+      <div class="col-3">
+        <button class="btn btn-primary w-100" id="btn-2">2</button>
+      </div>
     </div>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-    <script src="main.js"></script>
-    <script src="tab.js"></script>
+    <!-- Popup waveform editors -->
+    <div id="editor-WF_Block_PUND" class="popup">
+      <div class="popup-content">
+        <h4>Edit PUND Waveform</h4>
+        <form>
+          <div class="form-group">
+            <label">Amplitude (V)</label>
+            <input class="waveform-parameter" type="number" name="amplitude">
+          </div>
+          <div class="form-group">
+            <label>Offset (V)</label>
+            <input class="waveform-parameter" type="number" name="offset">
+          </div>
+          <div class="form-group">
+            <label>Rise Time (s)</label>
+            <input class="waveform-parameter" type="number" name="rise_time">
+          </div>
+          <div class="form-group">
+            <label>Delay Time (s)</label>
+            <input class="waveform-parameter" type="number" name="delay_time">
+          </div>
+          <div class="form-group">
+            <label>Number Cycles</label>
+            <input class="waveform-parameter" type="number" name="n_cycles">
+          </div>
+        </form>
+        <div class="button-group">
+          <button class="btn btn-primary accept-waveform-parameters">Accept</button>
+          <button class="btn btn-danger close-popup-btn">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="editor-WF_Block_Sine" class="popup">
+      <div class="popup-content">
+        <h4>Edit Sine Waveform</h4>
+        <form>
+          <div class="form-group">
+            <label>Amplitude (V)</label>
+            <input class="waveform-parameter" type="number" name="amplitude">
+          </div>
+          <div class="form-group">
+            <label>Offset (V)</label>
+            <input class="waveform-parameter" type="number" name="offset">
+          </div>
+          <div class="form-group">
+            <label>Frequency (V)</label>
+            <input class="waveform-parameter" type="number" name="freq">
+          </div>
+          <div class="form-group">
+            <label>Number Cycles</label>
+            <input class="waveform-parameter" type="number" name="n_cycles">
+          </div>
+          <div class="form-group">
+            <label>Phase (rad)</label>
+            <input class="waveform-parameter" type="number" name="phase">
+          </div>
+        </form>
+        <div class="button-group">
+          <button class="btn btn-primary accept-waveform-parameters">Accept</button>
+          <button class="btn btn-danger close-popup-btn">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="editor-WF_Block_Constant" class="popup">
+      <div class="popup-content">
+        <h4>Edit Constant Waveform</h4>
+        <form>
+          <div class="form-group">
+            <label >Value (V)</label>
+            <input class="waveform-parameter" type="number" name="value">
+          </div>
+          <div class="form-group">
+            <label >Duration (s)</label>
+            <input class="waveform-parameter" type="number" name="duration">
+          </div>
+        </form>
+        <div class="button-group">
+          <button class="btn btn-primary accept-waveform-parameters">Accept</button>
+          <button class="btn btn-danger close-popup-btn">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script src="main.js"></script>
+  <script src="tab.js"></script>
 </body>
 </html>
