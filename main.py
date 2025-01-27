@@ -28,6 +28,10 @@ def py_new_wf_block(tabId:str, channel:int, block_type:str):
     collection = tab[channel-1]
     if block_type == 'pund':
         collection.add_child( WF_Block_PUND(amplitude=1.0, rise_time=350e-6, delay_time=350e-6, n_cycles=4., offset=0.) )
+    elif block_type == 'sine':
+        collection.add_child( WF_Block_Sine(amplitude=1.0, phase=0, freq=1000, n_cycles=4., offset=0.) )
+    elif block_type == 'flat':
+        collection.add_child( WF_Block_Constant(value=0.0, duration=1e-3) )
     else:
         raise NotImplementedError(f'Block of type {block_type} not supported.')
 
@@ -52,7 +56,6 @@ def py_get_wf_skeleton(tabId):
         t,v = tab[ch].get_skeleton()
         data.append({'x':t.tolist(), 'y':v.tolist(), 
                      'type':'scatter', 'name':f'Ch{ch+1}'}) #plotly structure
-    print(data)
     return data
 
 @eel.expose
