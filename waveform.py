@@ -31,6 +31,17 @@ class State:
     def add_child(self, child):
         assert any([isinstance(child, cls) for cls in State.__subclasses__()]), f'Child must be an instance of a direct subclass of State, e.g. {State.__subclasses__()}'
         self._children.append(child)
+    def pop(self, idx:int):
+        return self._children.pop(idx)
+    def __getitem__(self, idx:int):
+        assert isinstance(idx, int), f'List_WF_Block only supports integer indexing right now. No slicing.'
+        return self._children[idx]
+    def __setitem__(self, idx:int, child):
+        assert isinstance(idx, int), f'List_WF_Block only supports integer indexing right now. No slicing.'
+        # assert isinstance(child, State), f'Expected WF_Block_Base, but got {type(child)} which does not inherit from Abstrack_WF_Block!'
+        self._children[idx] = child
+    def swap_children(self, idx1, idx2):
+        self[idx1], self[idx2] = self[idx2], self[idx1]
     def find_child_by_id(self, id):
         for child in self._children:
             if child.id == id:
@@ -60,7 +71,9 @@ class Tab(State):
 
 class WF_Block_Base(State):
     '''Abstract base class instructions.'''
-    def get_time_array(self, sample_rate:float):
+    def get_skeleton(self)->tuple[np.ndarray, np.ndarray]:
+        raise NotImplementedError
+    def get_time_array(self, sample_rate:float)->np.ndarray:
         '''Get an array of times corresponding to this block, for the specified sample rate'''
         raise NotImplementedError
     def sample_wf(self, sample_rate:float):
@@ -168,15 +181,6 @@ class WF_Block_Collection(WF_Block_Base):
     def add_child(self, child:WF_Block_Base):
         assert isinstance(child, WF_Block_Base), f'Expected a child instance of WF_Block_Base, but got {type(child)}!'
         super(WF_Block_Base, self).add_child(child) # do not use WF_Block_Base's add_child method (which will just raise an error). Use State's.
-    def pop(self, idx:int):
-        return self.blocks.pop(idx)
-    def __get_item__(self, idx:int):
-        assert isinstance(idx, int), f'List_WF_Block only supports integer indexing right now. No slicing.'
-        return self.blocks[idx]
-    def __set_item__(self, idx:int, block:WF_Block_Base):
-        assert isinstance(idx, int), f'List_WF_Block only supports integer indexing right now. No slicing.'
-        assert isinstance(block, WF_Block_Base), f'Expected WF_Block_Base, but got {type(block)} which does not inherit from Abstrack_WF_Block!'
-        self.blocks[idx] = block
 
 
 if __name__ == '__main__':

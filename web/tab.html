@@ -11,13 +11,13 @@
             <div class="col-md-8 column">
                 <h3>AWG</h3>
                 <div class="row">
-                    <div class="col-md-6 column">
+                    <div class="col-md-6 column awg-settings" data-channel="1">
                         <h4>CH1</h4>
-                        <div class="waveform-block-wrapper channel-1">
+                        <div class="waveform-block-wrapper">
                             <!-- Blocks will be added here -->
                         </div>
                         <div class="form-group">
-                            <select class="form-control block-adder" value=""  data-channel="awg-ch1">
+                            <select class="form-control waveform-block-adder" value="">
                                 <option value="">Add Block</option>
                                 <option value="csv">Load from CSV</option>
                                 <option value="pund">PUND</option>
@@ -27,13 +27,13 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-6 column">
+                    <div class="col-md-6 column awg-settings" data-channel="2">
                         <h4>CH2</h4>
-                        <div class="waveform-block-wrapper channel-2">
+                        <div class="waveform-block-wrapper">
                             <!-- Blocks will be added here -->
                         </div>
                         <div class="form-group">
-                            <select class="form-control block-adder" value=""  data-channel="awg-ch2">
+                            <select class="form-control waveform-block-adder" value="">
                                 <option value="">Add Block</option>
                                 <option value="csv">Load from CSV</option>
                                 <option value="pund">PUND</option>
@@ -44,6 +44,13 @@
                         </div>
                     </div>
                 </div>
+                
+                <div class="row">
+                    <div class="col-12">
+                        <div class="waveform-preview" style="width:100%;height:300px;"></div>
+                    </div>
+                </div>
+
             </div>
             <div class="col-md-4 column">
                 <h3>Oscilloscope</h3>
