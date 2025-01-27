@@ -100,7 +100,7 @@ $('#tab-content').on('click', '.waveform-block i.edit-waveform-block', async fun
     let blockSettings = await eel.py_get_wf_block_settings(tabId, channel, blockIdx)();
     let popup = $(`#design-${wfType}`);
     for (const [key, value] of Object.entries(blockSettings)) {
-        $(`#${key}-${wfType}`).val(value);
+        popup.find(`.waveform-parameter[name=${key}]`).val(value);
     };
     popup.css('display', 'flex');
 
@@ -109,8 +109,8 @@ $('#tab-content').on('click', '.waveform-block i.edit-waveform-block', async fun
     popup.find('.accept-waveform-parameters').on('click', async function() {
         console.log(blockSettings)
         for (const [key, value] of Object.entries(blockSettings)) {
-            if ($(`#${key}-${wfType}`).length) { // don't change value if key is not an element in the popup, e.g. _type
-                blockSettings[key] = parseFloat($(`#${key}-${wfType}`).val());
+            if (popup.find(`.waveform-parameter[name=${key}]`).length) { // don't change value if key is not an element in the popup, e.g. _type
+                blockSettings[key] = parseFloat(popup.find(`.waveform-parameter[name=${key}]`).val());
             }
         };
         console.log(blockSettings)
