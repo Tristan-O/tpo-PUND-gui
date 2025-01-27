@@ -138,6 +138,7 @@ class WF_Block_Constant(WF_Block_Base):
         return self.value * np.ones(len(self.get_time_array(sample_rate)))
 
 class WF_Block_Arbitrary(WF_Block_Base):
+    '''Block for holding arbitrary waveforms, more than just those predefined here.'''
     def to_dict(self):
         return dict(_type=self.__class__.__name__, 
                     values=self.values,

@@ -17,6 +17,9 @@
     font-size: small;
 }
 
+.waveform-block-wrapper {
+  max-height: 400px;
+}
 
 /* styles.css */
 .popup {
