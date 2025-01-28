@@ -28,6 +28,10 @@
   border-top: none;
 }
 
+.uploaded-waveform-tab {
+  font-weight: bold;
+}
+
 .waveform-block {
     border: 1px solid #ccc;
     background-color: #eee;

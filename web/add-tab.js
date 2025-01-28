@@ -87,9 +87,12 @@ $(document).ready(function() {
     $('#tab-content').on('click', '.waveform-upload', async function() {
         const tabId = get_enclosing_tab_id($(this));
         let success = await eel.py_upload_waveform(tabId)();
-        if (success) {
+        if (success) { // Apply some styles to the tab that has been uploaded
             $('.waveform-upload').removeClass('btn-success')
             $(this).addClass('btn-success')
+
+            $('a.nav-link').removeClass('uploaded-waveform-tab')
+            $(`a[href="#${tabId}"]`).addClass('uploaded-waveform-tab')
         }
     });
 
