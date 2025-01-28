@@ -34,7 +34,7 @@ $('#add-tab').click(function() {
         </div>
     `);
 
-    // Load template content into new tab and set tab number
+    // Load template content into new tab
     $(`#${newTabId} .tab-content-wrapper`).load('tab.html', function() {
         eel.py_new_tab(newTabId, tabName)();
         // Activate new tab
@@ -48,6 +48,12 @@ $('#add-tab').click(function() {
 // All .close-tab-btns will execute this when clicked, even if they are dynamically created
 $('#tab-list').on('click', '.close-tab-btn', function() {
     let tabSelector = $(this).parent().attr('href');
+    let thisIdx = $(this).closest('li').index();
+    $('#analysis-tab').tab('show');
+    $('#tab-list').find('a')[0].click();
+    console.log(thisIdx)
+    console.log( $($('#tab-list').find('li')[thisIdx-1]).find('a') )
+
     $(this).closest('li').remove();
     eel.py_close_tab($(tabSelector).attr('id'))();
     $(tabSelector).remove();
