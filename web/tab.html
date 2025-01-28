@@ -18,6 +18,7 @@
                         </div>
                         <div class="form-group">
                             <select class="form-control waveform-block-adder" value="">
+                                <!-- values here are python class names -->
                                 <option value="">Add Block</option>
                                 <option value="WF_Block_PUND">PUND</option>
                                 <option value="WF_Block_Sine">Sine</option>
@@ -35,8 +36,9 @@
                         </div>
                         <div class="form-group">
                             <select class="form-control waveform-block-adder" value="">
+                                <!-- values here are python class names -->
                                 <option value="">Add Block</option>
-                                <option value="WF_Block_PUND">PUND</option>
+                                <option value="WF_Block_PUND">PUND</option> 
                                 <option value="WF_Block_Sine">Sine</option>
                                 <option value="WF_Block_Constant">Constant</option>
                                 <option value="WF_Block_Square">Square (TODO)</option>
@@ -51,6 +53,7 @@
                     <div class="col-12">
                         <!-- plotly plot -->
                         <div class="waveform-preview"></div> 
+                        <button class="btn btn-primary w-100 waveform-upload">Upload</button>
                     </div>
                 </div>
 
@@ -67,7 +70,6 @@
                 </div>
             </div>
         </div>
-        <!-- <button class="close-popup-button btn btn-danger">Close Tab</button> -->
     </div>
 </body>
 </html>

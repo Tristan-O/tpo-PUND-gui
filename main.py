@@ -1,4 +1,4 @@
-import eel, json, time, pprint
+import eel, json, sys, time, pprint
 from waveform import State, Tab, WF_Block_Base, WF_Block_Collection, WF_Block_Constant, WF_Block_PUND, WF_Block_Sine
 
 
@@ -60,9 +60,8 @@ def py_connect():
     return 0
 
 @eel.expose
-def py_upload():
-    print('In send!')
-    return 0
+def py_upload_waveform(tabId:str):
+    return True
 
 @eel.expose
 def py_trigger():
@@ -77,5 +76,6 @@ def close():
     with open(ofname, 'w') as f:
         json.dump(d, f, indent=4)
     print(f'State saved to {ofname}')
+    sys.exit()
 
 eel.start('main.html', close_callback=lambda e1,e2: close())

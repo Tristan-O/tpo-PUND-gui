@@ -1,50 +1,6 @@
 $(document).ready(function() {
 
-// Add new tab
-$('#add-tab').click(function() {
-    let msg = 'Enter a name for the new tab:'
-    let tabName, newTabId
-    while (true) {
-        tabName = prompt(msg);
-        newTabId = tabName.replace(/\s+/g, '-').toLowerCase();
-        if (!tabName) {return;}
-        else if (/^[A-Za-z][A-Za-z0-9-_]*$/.test(newTabId)) {
-            break;
-        }
-        else {
-            msg = `Invalid name ${tabName} (produced id ${newTabId}).\nEnter a name for the new tab:`;
-        }
-    }
-
-
-    // Add new tab
-    $(`
-        <li class="nav-item">
-            <a class="nav-link" data-toggle="tab" href="#${newTabId}">
-                ${tabName}
-                <span class="close-tab-btn"><i class="bi bi-x"></i></span>
-            </a>
-        </li>
-    `).insertBefore($(this).parent());
-
-    // Add new tab content
-    $('#tab-content').append(`
-        <div id="${newTabId}" class="tab-pane fade">
-            <div class="tab-content-wrapper"></div>
-        </div>
-    `);
-
-    // Load template content into new tab
-    $(`#${newTabId} .tab-content-wrapper`).load('tab.html', function() {
-        eel.py_new_tab(newTabId, tabName)();
-        // Activate new tab
-        $(`a[href="#${newTabId}"]`).tab('show');
-        
-        
-    });
-});
-
-
+// Close tab
 // All .close-tab-btns will execute this when clicked, even if they are dynamically created
 $('#tab-list').on('click', '.close-tab-btn', function() {
     let tabSelector = $(this).parent().attr('href');
@@ -60,7 +16,7 @@ $('#tab-list').on('click', '.close-tab-btn', function() {
 });
 
 
-// Dropdowns add blocks
+// Dropdowns add waveform blocks
 $('#tab-content').on('click', 'select.waveform-block-adder', function() {
     $(this).change( async function() {
         const wfType = $(this).val();
@@ -84,6 +40,7 @@ $('#tab-content').on('click', 'select.waveform-block-adder', function() {
 });
 
 
+// Delete waveform block
 $('#tab-content').on('click', '.waveform-block i.delete-waveform-block', function() {
     console.log("delete clicked!");
     let $wfBlock = $(this).closest('.waveform-block');
@@ -96,6 +53,7 @@ $('#tab-content').on('click', '.waveform-block i.delete-waveform-block', functio
 });
 
 
+// Edit waveform block
 $('#tab-content').on('click', '.waveform-block i.edit-waveform-block', async function() {
     const tabId = get_enclosing_tab_id($(this));
     const channel = $(this).closest('.awg-settings').data('channel');
@@ -124,6 +82,17 @@ $('#tab-content').on('click', '.waveform-block i.edit-waveform-block', async fun
         await refresh_wf_preview(tabId);
         popup.css('display', 'none');
     })
+});
+
+
+// Upload waveform
+$('#tab-content').on('click', '.waveform-upload', async function() {
+    const tabId = get_enclosing_tab_id($(this));
+    let success = await eel.py_upload_waveform(tabId)();
+    if (success) {
+        $('.waveform-upload').removeClass('btn-success')
+        $(this).addClass('btn-success')
+    }
 });
 
 
