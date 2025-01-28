@@ -1,10 +1,22 @@
-import eel, json, sys, time, pprint
+import eel, os, pyvisa, json, sys, time, pprint
 from waveform import State, Tab, WF_Block_Base, WF_Block_Collection, WF_Block_Constant, WF_Block_PUND, WF_Block_Sine
 
 
+STATEDIR = './.states/'
+
+
 eel.init('web')
-state = State()
+try:
+    state_files = sorted([f for f in os.listdir(STATEDIR) if os.path.isfile(os.path.join(STATEDIR,f))])
+    with open(os.path.join(STATEDIR,state_files[-1])) as f:
+        state = State.from_dict(json.load(f))
+except:
+    state = State()
 waveform_classes = {cls.__name__:cls for cls in WF_Block_Base._get_all_subclasses()} # used for creating new waveform blocks
+
+@eel.expose
+def py_get_state():
+    return state.to_dict()
 
 @eel.expose
 def py_new_tab(id, name):
@@ -20,7 +32,7 @@ def py_close_tab(id):
 @eel.expose
 def py_delete_wf_block(tabId:str, channel:int, blockIdx:int):
     tab = state.find_child_by_id(tabId)
-    tab[channel].pop(blockIdx)    
+    tab[channel-1].pop(blockIdx)    
 
 @eel.expose
 def py_new_wf_block(tabId:str, channel:int, block_type:str):
@@ -68,15 +80,19 @@ def py_trigger():
     print('In trigger!')
     return 0
 
-def close():
+def close(*args, **kwargs):
     d = state.to_dict()
-    print('State:')
+    print('Application state upon closing:')
     pprint.pprint(d)
+
     ofname = f'./.states/app-state-{time.time()}.json'
+    if not os.path.exists('./.states'):
+        os.mkdir('./.states/')
     with open(ofname, 'w') as f:
         json.dump(d, f, indent=4)
+    
     print(f'State saved to {ofname}')
     sys.exit()
 
 
-eel.start('main.html', mode='edge', close_callback=lambda e1,e2: close())
+eel.start('main.html', mode='edge', close_callback=close)

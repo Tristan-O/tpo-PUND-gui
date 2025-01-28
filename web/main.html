@@ -10,10 +10,14 @@
     <script type="text/javascript" src="/eel.js"></script>
 </head>
 <body>
-  <div class="container">
+  <div class="container-fluid">
     <ul class="nav nav-tabs d-flex" id="tab-list">
       <li class="nav-item">
-        <a class="nav-link active" data-toggle="tab" href="#analysis-tab">Analysis</a>
+        <!-- .active means this is the tab that will be displayed by default when opening the app -->
+        <a class="nav-link active" data-toggle="tab" href="#connections-tab">Connections</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" data-toggle="tab" href="#analysis-tab">Analysis</a>
       </li>
         <!-- new tab li's will go here, e.g.
             <li class="nav-item">
@@ -25,7 +29,35 @@
       </li>
     </ul>
     <div class="tab-content" id="tab-content">
-      <div id="analysis-tab" class="tab-pane fade show active">
+      <div id="connections-tab" class="tab-pane fade show active">
+        <div class="tab-content-wrapper">
+          <div class="container-fluid">
+            <h3>Device Connections</h3>
+            <div class="row">
+                <div class="col-4">
+                  <!-- Oscope IP input -->
+                  <div class="input-field">
+                      <label for="awg-ip">AWG IP:</label>
+                      <input type="text" id="awg-ip" name="awg-ip" class="form-control">
+                      <button class="btn btn-primary w-100" id="connect-awg-btn">Connect</button>
+                  </div>
+                  <div class="input-field">
+                      <label for="oscilloscope-ip">Oscilloscope IP:</label>
+                      <input type="text" id="oscilloscope-ip" name="oscilloscope-ip" class="form-control">
+                      <button class="btn btn-primary w-100" id="connect-oscilloscope-btn">Connect</button>
+                  </div>
+                  <div class="input-field">
+                      <label for="nf-tia-ip">NF TIA IP:</label>
+                      <input type="text" id="nf-tia-ip" name="nf-tia-ip" class="form-control">
+                      <button class="btn btn-primary w-100" id="connect-nf-tia-btn">Connect</button>
+                  </div>
+                  <button class="btn btn-primary" id="test-connections">Test Connections</button>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="analysis-tab" class="tab-pane fade show">
         <div class="tab-content-wrapper">
           <div class="container-fluid">
             <h3>Analysis</h3>
@@ -77,9 +109,6 @@
       -->
     </div>
     <div class="row">
-      <div class="col-3">
-        <button class="btn btn-primary w-100" id="connect-btn">Connect</button>
-      </div>
       <div class="col-3">
         <button class="btn btn-primary w-100" id="trigger-btn">Trigger</button>
       </div>
@@ -180,7 +209,8 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
   <script src="main.js"></script>
-  <script src="tab.js"></script>
+  <script src="add-tab.js"></script>
+  <script src="load-state.js"></script>
   <script>
     // Example Plotly plot 1
     var data1 = [{
@@ -189,7 +219,9 @@
         type: 'scatter'
     }];
     var layout1 = {
-        title: 'Plot 1'
+        title: 'Plot 1',
+        width: '100%',
+        responsive: true,
     };
     Plotly.newPlot('plot1', data1, layout1);
 
@@ -200,7 +232,9 @@
         type: 'scatter'
     }];
     var layout2 = {
-        title: 'Plot 2'
+        title: 'Plot 2',
+        width: '100%',
+        responsive: true,
     };
     Plotly.newPlot('plot2', data2, layout2);
 </script>

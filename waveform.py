@@ -147,7 +147,7 @@ class WF_Block_Sine(WF_Block_Base):
         sample_rate = self.freq*20 # be well above nyquist
         return self.get_time_array(sample_rate), self.sample_wf(sample_rate)
     def get_time_array(self, sample_rate):
-        return np.arange(0, self.n_cycles/self.freq, 1/sample_rate)
+        return np.arange(0, self.n_cycles/self.freq+1/sample_rate, 1/sample_rate)
     def sample_wf(self, sample_rate):
         return self.amplitude * np.sin(2*np.pi*self.freq*self.get_time_array(sample_rate) - self.phase) + self.offset
 
@@ -197,8 +197,11 @@ class WF_Block_Collection(WF_Block_Base):
     def get_skeleton(self):
         t = [0]
         v = []
-        for block in self._children:
+        for i,block in enumerate(self._children):
             t_,v_ = block.get_skeleton()
+            if i>0: # exclude first point for subsequent blocks
+                t_ = t_[1:]
+                v_ = v_[1:]
             t.extend( (t_+t[-1]).tolist() )
             v.extend( v_.tolist() )
         return np.array(t[1:]), np.array(v)

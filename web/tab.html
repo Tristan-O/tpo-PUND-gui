@@ -11,7 +11,7 @@
             <div class="col-md-8 column">
                 <h3>AWG</h3>
                 <div class="row">
-                    <div class="col-md-6 column awg-settings" data-channel="1">
+                    <div class="col-md-6 column awg-settings channel-1" data-channel="1">
                         <h4>CH1</h4>
                         <div class="waveform-block-wrapper">
                             <!-- Blocks will be added here -->
@@ -29,7 +29,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-6 column awg-settings" data-channel="2">
+                    <div class="col-md-6 column awg-settings channel-2" data-channel="2">
                         <h4>CH2</h4>
                         <div class="waveform-block-wrapper">
                             <!-- Blocks will be added here -->
@@ -59,7 +59,16 @@
 
             </div>
             <div class="col-md-4 column">
+                <h3>NF TIA</h3>
+                <div class="input-field">
+                    <label>Gain (Ω):</label>
+                    <input type="number" name="nf-tia-gain" class="form-control nf-tia-parameter">
+                </div>
                 <h3>Oscilloscope</h3>
+                <div class="input-field">
+                    <label>Sample rate (Hz):</label>
+                    <input type="number" name="sample-rate" class="form-control oscilloscope-parameter">
+                </div>
                 <div class="row">
                     <div class="col-md-6 column">
                         <h4>CH1</h4>
