@@ -78,4 +78,5 @@ def close():
     print(f'State saved to {ofname}')
     sys.exit()
 
-eel.start('main.html', close_callback=lambda e1,e2: close())
+
+eel.start('main.html', mode='edge', close_callback=lambda e1,e2: close())
