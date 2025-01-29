@@ -19,8 +19,8 @@ def py_get_state():
     return state.to_dict()
 
 @eel.expose
-def py_new_tab(id, name, awg, oscilloscope, nf_tia, dut):
-    tab =  Tab(id, name, awg, oscilloscope, nf_tia, dut)
+def py_new_tab(id, name, awg, oscilloscope, tia, dut):
+    tab =  Tab(id, name, awg, oscilloscope, tia, dut)
     state.add_child(tab)
     tab.add_child(WF_Block_Collection()) # CH1
     tab.add_child(WF_Block_Collection()) # CH2

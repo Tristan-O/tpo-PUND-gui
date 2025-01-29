@@ -56,21 +56,35 @@ class ApplicationState:
         else:
             raise ValueError(f'Child with id {id} not found!')
 
+class DeviceSettings:
+    '''Just a data storage class. Basically a dict with required inputs.'''
+    def to_dict(self)->dict:
+        return self.params
+    def __init__(self, **params):
+        self.params = {k:e for k,e in params.items()}
+    def update(self, **params):
+        if any([k not in self.params for k in params.keys()]):
+            raise ValueError('Cannot set a new parameter that was not initialized at start!')
+        self.params.update(**params)
 
 class Tab(ApplicationState):
     '''This class represents Tabs in the app.'''
-    def __init__(self, id:str, name:str, awg:dict, oscilloscope:dict, nf_tia:dict, dut:dict):
+    def __init__(self, id:str, name:str, 
+                 awg:DeviceSettings, 
+                 oscilloscope:DeviceSettings,
+                 tia:DeviceSettings, 
+                 dut:DeviceSettings):
         super().__init__()
         self.id = id
         self.name = name
         self.awg = awg
         self.oscilloscope = oscilloscope
         self.dut = dut
-        self.nf_tia = nf_tia
+        self.tia = tia
     def to_dict(self)->dict:
         res = dict(name=self.name, id=self.id, awg=self.awg, 
                    oscilloscope=self.oscilloscope, dut=self.dut,
-                   nf_tia=self.nf_tia)
+                   tia=self.tia)
         res.update( super().to_dict() )
         return res
 
