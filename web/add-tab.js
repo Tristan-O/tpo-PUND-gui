@@ -17,23 +17,19 @@ $(document).ready(function() {
 
 
     // Dropdowns add waveform blocks
-    $('#tab-content').on('click', 'select.waveform-block-adder', function() {
-        $(this).change( async function() {
-            const wfType = $(this).val();
-            if (wfType) {
-                const tabId = get_enclosing_tab_id($(this));
-                const channel = $(this).closest('.awg-settings').data('channel');
-            
-                
-                eel.py_new_wf_block(tabId, channel, wfType)();
-                await refresh_wf_preview(tabId);
-                
-                add_wf_block(tabId, channel, wfType)
+    $('#tab-content').on('change', 'select.waveform-block-adder', async function() {
+        const wfType = $(this).val();
+        if (wfType) {
+            const tabId = get_enclosing_tab_id($(this));
+            const channel = $(this).closest('.awg-settings').data('channel');
+        
+            eel.py_new_wf_block(tabId, channel, wfType)();
+            await refresh_wf_preview(tabId);
 
-                $(this).val(''); // reset selector
+            add_wf_block(tabId, channel, wfType)
 
-            }
-        });
+            $(this).val(''); // reset selector
+        }
     });
 
     // Delete waveform block
@@ -84,15 +80,15 @@ $(document).ready(function() {
 
 
     // Upload waveform
-    $('#tab-content').on('click', '.waveform-upload', async function() {
+    $('#tab-content').on('click', '.waveform-send', async function() {
         const tabId = get_enclosing_tab_id($(this));
-        let success = await eel.py_upload_waveform(tabId)();
-        if (success) { // Apply some styles to the tab that has been uploaded
-            $('.waveform-upload').removeClass('btn-success')
+        let success = await eel.py_send_waveform(tabId)();
+        if (success) { // Apply some styles to the tab that has been sent
+            $('.waveform-send').removeClass('btn-success')
             $(this).addClass('btn-success')
 
-            $('a.nav-link').removeClass('uploaded-waveform-tab')
-            $(`a[href="#${tabId}"]`).addClass('uploaded-waveform-tab')
+            $('a.nav-link').removeClass('sent-waveform-tab')
+            $(`a[href="#${tabId}"]`).addClass('sent-waveform-tab')
         }
     });
 
@@ -106,11 +102,47 @@ async function refresh_wf_preview(tabId) {
     let data = await eel.py_get_wf_skeleton(tabId)();
 
     let layout = {
-        title: 'Waveform Preview'
+        title: {
+            text: 'Waveform Preview',
+            font: {
+                size: 20,
+                color: '#333'
+            }
+        },
+        xaxis: {
+            title: 'time (s)',
+            tickfont: {
+                size: 14
+            }
+        },
+        yaxis: {
+            title: 'AWG output (V)',
+            tickfont: {
+                size: 14
+            }
+        },
+        legend: {
+            x: 1,
+            y: 1,
+            xanchor: 'right',
+            yanchor: 'top'
+        },
+        margin: {
+            l: 50,
+            r: 50,
+            b: 50,
+            t: 80
+        },
+        paper_bgcolor: '#f5f5f5',
+        plot_bgcolor: '#fff'
     };
+
+    let config = {
+        responsive: true
+    }
     
     console.log(data)
-    Plotly.newPlot($(`#${tabId} .waveform-preview`)[0], data, layout);
+    Plotly.newPlot($(`#${tabId} .waveform-preview`)[0], data, layout, config);
 }
 
 function add_wf_block(tabId, channel, wfType) {

@@ -13,6 +13,10 @@
                 <div class="row">
                     <div class="col-md-6 column awg-settings channel-1" data-channel="1">
                         <h4>CH1</h4>
+                        <div class="input-field">
+                            <label>Sample rate (Hz):</label>
+                            <input type="number" name="sample-rate" class="form-control awg-parameter">
+                        </div>
                         <div class="waveform-block-wrapper">
                             <!-- Blocks will be added here -->
                         </div>
@@ -31,6 +35,10 @@
                     </div>
                     <div class="col-md-6 column awg-settings channel-2" data-channel="2">
                         <h4>CH2</h4>
+                        <div class="input-field">
+                            <label>Sample rate (Hz):</label>
+                            <input type="number" name="sample-rate" class="form-control awg-parameter">
+                        </div>
                         <div class="waveform-block-wrapper">
                             <!-- Blocks will be added here -->
                         </div>
@@ -53,28 +61,60 @@
                     <div class="col-12">
                         <!-- plotly plot -->
                         <div class="waveform-preview"></div> 
-                        <button class="btn btn-primary w-100 waveform-upload">Upload</button>
+                        <button class="btn btn-primary w-100 waveform-send">Send to AWG</button>
                     </div>
                 </div>
 
             </div>
             <div class="col-md-4 column">
                 <h3>NF TIA</h3>
-                <div class="input-field">
-                    <label>Gain (Ω):</label>
-                    <input type="number" name="nf-tia-gain" class="form-control nf-tia-parameter">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="input-field">
+                            <label>Gain (Ω):</label>
+                            <input type="number" name="nf-tia-gain" class="form-control nf-tia-parameter">
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="input-field">
+                            <label>Bandwidth (us):</label>
+                            <input type="number" name="nf-tia-gain" class="form-control nf-tia-parameter">
+                        </div>
+                    </div>
                 </div>
                 <h3>Oscilloscope</h3>
                 <div class="input-field">
                     <label>Sample rate (Hz):</label>
-                    <input type="number" name="sample-rate" class="form-control oscilloscope-parameter">
+                    <input type="number" name="sample-rate" class="form-control oscilloscope-parameter" disabled="true">
                 </div>
                 <div class="row">
-                    <div class="col-md-6 column">
-                        <h4>CH1</h4>
+                    <div class="col-6">
+                        <h5>CH1</h5>
+                        <div class="input-field">
+                            <label>Range (V):</label>
+                            <input type="number" name="range-ch1" class="form-control oscilloscope-parameter">
+                        </div>
                     </div>
-                    <div class="col-md-6 column">
-                        <h4>CH2</h4>
+                    <div class="col-6">
+                        <h5>CH2</h5>
+                        <div class="input-field">
+                            <label>Range (V):</label>
+                            <input type="number" name="range-ch2" class="form-control oscilloscope-parameter">
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <h5>CH3</h5>
+                        <div class="input-field">
+                            <label>Range (V):</label>
+                            <input type="number" name="range-ch3" class="form-control oscilloscope-parameter">
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <h5>CH4</h5>
+                        <div class="input-field">
+                            <label>Range (V):</label>
+                            <input type="number" name="range-ch4" class="form-control oscilloscope-parameter">
+                        </div>
                     </div>
                 </div>
             </div>

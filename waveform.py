@@ -1,8 +1,8 @@
 import numpy as np
 
 
-class State:
-    '''This is the state of the app. Saves and loads from json. There should really only be one instance of State, but I won't enforce that.'''
+class ApplicationState:
+    '''This is the state of the app. Saves and loads from json. There should really only be one instance of ApplicationState, but I won't enforce that.'''
     @classmethod
     def _get_all_subclasses(cls):
         '''Recursively get all subclasses of this class. This list includes this class.'''
@@ -15,21 +15,21 @@ class State:
         '''Recursively load a state'''
         _type = d.pop('_type')
         children = d.pop('children', [])
-        for cls in State._get_all_subclasses():
+        for cls in ApplicationState._get_all_subclasses():
             if cls.__name__ == _type:
                 this = cls(**d)
                 for child in children:
                     this.add_child( cls.from_dict(child) )
                 return this
         else:
-            raise ValueError(f'{_type} is not a valid subclass of State!')
+            raise ValueError(f'{_type} is not a valid subclass of ApplicationState!')
     def to_dict(self)->dict:
         return dict(_type=self.__class__.__name__,
                     children=[child.to_dict() for child in self._children])
     def __init__(self):
-        self._children:list[State] = []
+        self._children:list[ApplicationState] = []
     def add_child(self, child):
-        assert any([isinstance(child, cls) for cls in State.__subclasses__()]), f'Child must be an instance of a direct subclass of State, e.g. {State.__subclasses__()}'
+        assert any([isinstance(child, cls) for cls in ApplicationState.__subclasses__()]), f'Child must be an instance of a direct subclass of ApplicationState, e.g. {ApplicationState.__subclasses__()}'
         self._children.append(child)
     def pop(self, idx:int):
         return self._children.pop(idx)
@@ -38,7 +38,7 @@ class State:
         return self._children[idx]
     def __setitem__(self, idx:int, child):
         assert isinstance(idx, int), f'List_WF_Block only supports integer indexing right now. No slicing.'
-        # assert isinstance(child, State), f'Expected WF_Block_Base, but got {type(child)} which does not inherit from Abstrack_WF_Block!'
+        # assert isinstance(child, ApplicationState), f'Expected WF_Block_Base, but got {type(child)} which does not inherit from Abstrack_WF_Block!'
         self._children[idx] = child
     def swap_children(self, idx1, idx2):
         self[idx1], self[idx2] = self[idx2], self[idx1]
@@ -57,19 +57,25 @@ class State:
             raise ValueError(f'Child with id {id} not found!')
 
 
-class Tab(State):
+class Tab(ApplicationState):
     '''This class represents Tabs in the app.'''
-    def __init__(self, id:str, name:str):
+    def __init__(self, id:str, name:str, awg:dict, oscilloscope:dict, nf_tia:dict, dut:dict):
         super().__init__()
         self.id = id
         self.name = name
+        self.awg = awg
+        self.oscilloscope = oscilloscope
+        self.dut = dut
+        self.nf_tia = nf_tia
     def to_dict(self)->dict:
-        res = dict(name=self.name, id=self.id)
+        res = dict(name=self.name, id=self.id, awg=self.awg, 
+                   oscilloscope=self.oscilloscope, dut=self.dut,
+                   nf_tia=self.nf_tia)
         res.update( super().to_dict() )
         return res
 
 
-class WF_Block_Base(State):
+class WF_Block_Base(ApplicationState):
     '''Abstract base class instructions.'''
     def get_skeleton(self)->tuple[np.ndarray, np.ndarray]:
         raise NotImplementedError
@@ -236,7 +242,7 @@ class WF_Block_Collection(WF_Block_Base):
         return np.concat( [block.sample_wf(sample_rate) for block in self.blocks] )
     def add_child(self, child:WF_Block_Base):
         assert isinstance(child, WF_Block_Base), f'Expected a child instance of WF_Block_Base, but got {type(child)}!'
-        super(WF_Block_Base, self).add_child(child) # do not use WF_Block_Base's add_child method (which will just raise an error). Use State's.
+        super(WF_Block_Base, self).add_child(child) # do not use WF_Block_Base's add_child method (which will just raise an error). Use ApplicationState's.
     def get_labels(self, sample_rate:float, offset:float=0, lblfmt:str='{prefix}.{childIdx}.{suffix}')->dict[str,slice]:
         d = dict()
         for i,block in enumerate(self._children):
@@ -253,7 +259,7 @@ class WF_Block_Square(WF_Block_Base):
 
 
 if __name__ == '__main__':
-    state = State()
+    state = ApplicationState()
     pund_tab = Tab('pund', 'PUND')
     state.add_child(pund_tab)
     state.add_child(Tab('ndpu', 'NDPU'))
@@ -263,7 +269,7 @@ if __name__ == '__main__':
     pund_tab.add_child(ch2_collection)
     print(state.to_dict())
 
-    d = {'_type': 'State', 'children': [{'name': 'PUND', 'id': 'pund', '_type': 'Tab', 'children': [{'_type': 'WF_Block_Collection', 'children': [{'_type': 'WF_Block_PUND', 'amplitude': -1, 'rise_time': 1, 'delay_time': 1, 'n_cycles': 1, 'offset': 1}, {'_type': 'WF_Block_Sine', 'amplitude': 1, 'freq': 1, 'n_cycles': 1, 'offset': 1, 'phase': 1}]}, {'_type': 'WF_Block_Collection', 'children': []}]}, {'name': 'NDPU', 'id': 'ndpu', '_type': 'Tab', 'children': []}]}
-    state = State.from_dict(d)
+    d = {'_type': 'ApplicationState', 'children': [{'name': 'PUND', 'id': 'pund', '_type': 'Tab', 'children': [{'_type': 'WF_Block_Collection', 'children': [{'_type': 'WF_Block_PUND', 'amplitude': -1, 'rise_time': 1, 'delay_time': 1, 'n_cycles': 1, 'offset': 1}, {'_type': 'WF_Block_Sine', 'amplitude': 1, 'freq': 1, 'n_cycles': 1, 'offset': 1, 'phase': 1}]}, {'_type': 'WF_Block_Collection', 'children': []}]}, {'name': 'NDPU', 'id': 'ndpu', '_type': 'Tab', 'children': []}]}
+    state = ApplicationState.from_dict(d)
     print(state._children)
     print(state.to_dict())

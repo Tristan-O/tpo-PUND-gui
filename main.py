@@ -1,5 +1,5 @@
 import eel, os, pyvisa, json, sys, time, pprint
-from waveform import State, Tab, WF_Block_Base, WF_Block_Collection, WF_Block_Constant, WF_Block_PUND, WF_Block_Sine
+from waveform import ApplicationState, Tab, WF_Block_Base, WF_Block_Collection, WF_Block_Constant, WF_Block_PUND, WF_Block_Sine
 
 
 STATEDIR = './.states/'
@@ -9,9 +9,9 @@ eel.init('web')
 try:
     state_files = sorted([f for f in os.listdir(STATEDIR) if os.path.isfile(os.path.join(STATEDIR,f))])
     with open(os.path.join(STATEDIR,state_files[-1])) as f:
-        state = State.from_dict(json.load(f))
+        state = ApplicationState.from_dict(json.load(f))
 except:
-    state = State()
+    state = ApplicationState()
 waveform_classes = {cls.__name__:cls for cls in WF_Block_Base._get_all_subclasses()} # used for creating new waveform blocks
 
 @eel.expose
@@ -19,8 +19,8 @@ def py_get_state():
     return state.to_dict()
 
 @eel.expose
-def py_new_tab(id, name):
-    tab = Tab(id, name)
+def py_new_tab(id, name, awg, oscilloscope, nf_tia, dut):
+    tab =  Tab(id, name, awg, oscilloscope, nf_tia, dut)
     state.add_child(tab)
     tab.add_child(WF_Block_Collection()) # CH1
     tab.add_child(WF_Block_Collection()) # CH2
@@ -72,7 +72,7 @@ def py_connect():
     return 0
 
 @eel.expose
-def py_upload_waveform(tabId:str):
+def py_send_waveform(tabId:str): # returns True if waveform upload was successful. False otherwise.
     return True
 
 @eel.expose

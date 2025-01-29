@@ -17,9 +17,10 @@ $(document).ready(function() {
         }
         add_tab(newTabName, newTabId, function() {
             // Register new tab with python
-            eel.py_new_tab(newTabId, newTabName)();
+            eel.py_new_tab(newTabId, newTabName, {}, {}, {}, {})();
             // Activate new tab
             $(`a[href="#${newTabId}"]`).tab('show');
+            refresh_wf_preview(newTabId)
         });
     });
 

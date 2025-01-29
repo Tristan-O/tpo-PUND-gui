@@ -28,29 +28,30 @@
   border-top: none;
 }
 
-.uploaded-waveform-tab {
+.sent-waveform-tab {
   font-weight: bold;
 }
 
 .waveform-block {
     border: 1px solid #ccc;
     background-color: #eee;
-    padding: 10px;
-    margin: 10px 0;
+    padding: 5px;
     max-height: 40px;
     display: flex;
     align-items: center;
-}
-
-.waveform-block .icon {
+  }
+  
+  .waveform-block .icon {
     /* margin-right: 10px; */
     text-align: center;
     cursor: pointer;
     font-size: small;
-}
-
-.waveform-block-wrapper {
-  max-height: 400px;
+  }
+  
+  .waveform-block-wrapper {
+    max-height: 200px;
+    overflow-y:auto;
+    margin-bottom: 10px;
 }
 
 /* styles.css */
