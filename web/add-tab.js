@@ -104,19 +104,20 @@ async function refresh_wf_preview(tabId) {
     let layout = {
         title: {
             text: 'Waveform Preview',
-            font: {
-                size: 20,
-                color: '#333'
-            }
+        },
+        font: {
+            color: '#eee'
         },
         xaxis: {
             title: 'time (s)',
+            color: '#eee',
             tickfont: {
                 size: 14
             }
         },
         yaxis: {
             title: 'AWG output (V)',
+            color: '#eee',
             tickfont: {
                 size: 14
             }
@@ -133,8 +134,8 @@ async function refresh_wf_preview(tabId) {
             b: 50,
             t: 80
         },
-        paper_bgcolor: '#f5f5f5',
-        plot_bgcolor: '#fff'
+        paper_bgcolor: '#222',
+        plot_bgcolor: '#333'
     };
 
     let config = {
