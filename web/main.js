@@ -8,9 +8,9 @@ $(document).ready(function() {
             newTabName = prompt(msg);
             newTabId = newTabName.replace(/\s+/g, '-').toLowerCase();;
             if (!newTabName) {return;}
-            else if (/^[A-Za-z][A-Za-z0-9-_]*$/.test(newTabId)) {
-                break;
-            }
+            else if ($(`#${newTabId}`).length != 0) {
+                msg = `Invalid name ${newTabName} (produced id ${newTabId}, which already exists).\nEnter a name for the new tab:`;
+            } else if (/^[A-Za-z][A-Za-z0-9-_]*$/.test(newTabId)) {break;}
             else {
                 msg = `Invalid name ${newTabName} (produced id ${newTabId}).\nEnter a name for the new tab:`;
             }

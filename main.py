@@ -1,5 +1,6 @@
 import eel, os, pyvisa, json, sys, time, pprint
-from waveform import ApplicationState, Tab, WF_Block_Base, WF_Block_Collection, WF_Block_Constant, WF_Block_PUND, WF_Block_Sine
+from app_base import AppState, Tab
+from templatewf import TemplateBaseWF, TemplateCollectionWF
 
 
 STATEDIR = './.states/'
@@ -9,10 +10,10 @@ eel.init('web')
 try:
     state_files = sorted([f for f in os.listdir(STATEDIR) if os.path.isfile(os.path.join(STATEDIR,f))])
     with open(os.path.join(STATEDIR,state_files[-1])) as f:
-        state = ApplicationState.from_dict(json.load(f))
+        state = AppState.from_dict(json.load(f))
 except:
-    state = ApplicationState()
-waveform_classes = {cls.__name__:cls for cls in WF_Block_Base._get_all_subclasses()} # used for creating new waveform blocks
+    state = AppState()
+waveform_classes = {cls.__name__:cls for cls in TemplateBaseWF._get_all_subclasses()} # used for creating new waveform blocks
 
 @eel.expose
 def py_get_state():
@@ -22,8 +23,8 @@ def py_get_state():
 def py_new_tab(id, name, awg, oscilloscope, tia, dut):
     tab =  Tab(id, name, awg, oscilloscope, tia, dut)
     state.add_child(tab)
-    tab.add_child(WF_Block_Collection()) # CH1
-    tab.add_child(WF_Block_Collection()) # CH2
+    tab.add_child(TemplateCollectionWF(name='ch1')) # CH1
+    tab.add_child(TemplateCollectionWF(name='ch2')) # CH2
 
 @eel.expose
 def py_close_tab(id):
@@ -32,7 +33,7 @@ def py_close_tab(id):
 @eel.expose
 def py_delete_wf_block(tabId:str, channel:int, blockIdx:int):
     tab = state.find_child_by_id(tabId)
-    tab[channel-1].pop(blockIdx)    
+    tab[channel-1].pop(blockIdx)
 
 @eel.expose
 def py_new_wf_block(tabId:str, channel:int, block_type:str):
@@ -41,13 +42,13 @@ def py_new_wf_block(tabId:str, channel:int, block_type:str):
     collection.add_child( waveform_classes[block_type]() )
 
 @eel.expose
-def py_get_wf_block_settings(tabId:str, channel:int, blockIdx:int):
+def py_get_TemplatesettingsWF(tabId:str, channel:int, blockIdx:int):
     tab = state.find_child_by_id(tabId)
     block = tab[channel-1][blockIdx]
     res = block.to_dict()
     return res
 @eel.expose
-def py_set_wf_block_settings(tabId:str, channel:int, blockIdx:int, blockSettings:dict):
+def py_set_TemplatesettingsWF(tabId:str, channel:int, blockIdx:int, blockSettings:dict):
     tab = state.find_child_by_id(tabId)
     print(blockSettings)
     tab[channel-1][blockIdx] = tab[channel-1][blockIdx].__class__.from_dict(blockSettings)

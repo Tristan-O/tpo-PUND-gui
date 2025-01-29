@@ -1,5 +1,5 @@
 import numpy as np
-from waveform import WF_Block_Collection, WF_Block_PUND, WF_Block_Sine
+from templatewf import WF_Block_Collection, WF_Block_PUND, WF_Block_Sine
 
 
 class Data:

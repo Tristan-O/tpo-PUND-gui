@@ -150,7 +150,9 @@ function add_wf_block(tabId, channel, wfType) {
     console.log($(`#${tabId}`).find(`.awg-settings.channel-${channel} .waveform-block-wrapper`));
     $(`#${tabId}`).find(`.awg-settings.channel-${channel} .waveform-block-wrapper`).append($newBlock)
     $newBlock.load('waveform-block.html', function() {
-        $newBlock.find('.type-waveform-block').text(wfType);
+        $newBlock.find('.type-waveform-block').text(
+            $(`#${tabId} .channel-${channel} option[value="${wfType}"]`).text()
+        );
         console.log('loaded!', tabId, channel, wfType)
     }); // the things in this function occur AFTER the loading has finished.
 }

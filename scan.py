@@ -1,5 +1,5 @@
 import pyvisa
-from waveform import DeviceSettings
+from app_base import DeviceSettings
 
 # Create a Resource Manager
 rm = pyvisa.ResourceManager()
