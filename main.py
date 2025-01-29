@@ -31,15 +31,18 @@ def py_close_tab(id):
     state.remove_child_by_id(id)
 
 @eel.expose
-def py_delete_wf_block(tabId:str, channel:int, blockIdx:int):
-    tab = state.find_child_by_id(tabId)
-    tab[channel-1].pop(blockIdx)
-
-@eel.expose
 def py_new_wf_block(tabId:str, channel:int, block_type:str):
     tab = state.find_child_by_id(tabId)
     collection = tab[channel-1]
     collection.add_child( waveform_classes[block_type]() )
+@eel.expose
+def py_delete_wf_block(tabId:str, channel:int, blockIdx:int):
+    tab = state.find_child_by_id(tabId)
+    tab[channel-1].pop(blockIdx)
+@eel.expose
+def py_swap_wf_blocks(tabId:str, channel:int, blockIdx0:int, blockIdx1:int):
+    tab = state.find_child_by_id(tabId)
+    tab[channel-1].swap_children(blockIdx0, blockIdx1)
 
 @eel.expose
 def py_get_wf_block_settings(tabId:str, channel:int, blockIdx:int):
@@ -83,8 +86,8 @@ def py_trigger():
 
 def close(*args, **kwargs):
     d = state.to_dict()
-    print('Application state upon closing:')
-    pprint.pprint(d)
+    # print('Application state upon closing:')
+    # pprint.pprint(d)
 
     ofname = f'./.states/app-state-{time.time()}.json'
     if not os.path.exists('./.states'):

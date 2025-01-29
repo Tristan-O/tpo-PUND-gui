@@ -78,6 +78,49 @@ $(document).ready(function() {
         })
     });
 
+    // Move-up waveform block
+    $('#tab-content').on('click', '.waveform-block i.move-up-waveform-block', async function() {
+        console.log("move-up clicked!");
+        let $wfBlock = $(this).closest('.waveform-block');
+        let $parent = $wfBlock.parent()
+        const tabId = get_enclosing_tab_id($wfBlock);
+        const channel = $wfBlock.closest('.awg-settings').data('channel');
+        const blockIdx = $wfBlock.index();
+        
+        if (blockIdx < 1 || blockIdx >= $parent.children().length) {
+            console.log("Invalid index");
+            return;
+        }
+        
+        let $upperChild = $($parent.children()[blockIdx - 1]);
+        $wfBlock.insertBefore($upperChild);
+          
+        await eel.py_swap_wf_blocks(tabId, channel, blockIdx, blockIdx-1)();
+
+        await refresh_wf_preview(tabId);
+    });
+
+    // Move-up waveform block
+    $('#tab-content').on('click', '.waveform-block i.move-down-waveform-block', async function() {
+        console.log("move-down clicked!");
+        let $wfBlock = $(this).closest('.waveform-block');
+        let $parent = $wfBlock.parent()
+        const tabId = get_enclosing_tab_id($wfBlock);
+        const channel = $wfBlock.closest('.awg-settings').data('channel');
+        const blockIdx = $wfBlock.index();
+        
+        if (blockIdx < 0 || blockIdx >= $parent.children().length - 1) {
+            console.log("Invalid index");
+            return;
+        }
+        
+        let $lowerChild = $($parent.children()[blockIdx + 1]);
+        $wfBlock.insertAfter($lowerChild);
+          
+        await eel.py_swap_wf_blocks(tabId, channel, blockIdx, blockIdx+1)();
+
+        await refresh_wf_preview(tabId);
+    });
 
     // Upload waveform
     $('#tab-content').on('click', '.waveform-send', async function() {
