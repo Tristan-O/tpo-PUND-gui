@@ -32,39 +32,37 @@
 
       <div id="connections-tab" class="tab-pane fade show active">
         <div class="tab-content-wrapper">
-          <div class="container-fluid">
-            <h3>Device Connections</h3>
-            <button class="btn btn-primary" id="test-connections">Test Connections</button>
-            <div class="row mt-5">
-              <div class="col-md-4">
-                <h4>AWG</h4>
-                <div class="form-group">
-                  <label for="awg-ip">IP:</label>
-                  <input type="text" id="awg-ip" name="awg-ip" class="form-control">
-                </div>
-                <button class="btn btn-primary w-100" id="connect-awg-btn">Connect</button>
+          <h3>Device Connections</h3>
+          <button class="btn btn-primary" id="test-connections">Test Connections</button>
+          <div class="row mt-5">
+            <div class="col-md-4">
+              <h4>AWG</h4>
+              <div class="form-group">
+                <label for="awg-ip">IP:</label>
+                <input type="text" id="awg-ip" name="awg-ip" class="form-control">
               </div>
-              <div class="col-md-4">
-                <h4>Oscilloscope</h4>
-                <div class="form-group">
-                  <label for="oscilloscope-ip">IP:</label>
-                  <input type="text" id="oscilloscope-ip" name="oscilloscope-ip" class="form-control">
-                </div>
-                <button class="btn btn-primary w-100" id="connect-oscilloscope-btn">Connect</button>
+              <button class="btn btn-primary w-100" id="connect-awg-btn">Connect</button>
+            </div>
+            <div class="col-md-4">
+              <h4>Oscilloscope</h4>
+              <div class="form-group">
+                <label for="oscilloscope-ip">IP:</label>
+                <input type="text" id="oscilloscope-ip" name="oscilloscope-ip" class="form-control">
               </div>
-              <div class="col-md-4">
-                <h4>NF TIA</h4>
-                <div class="form-group">
-                  <label for="nf-tia-ip">IP:</label>
-                  <input type="text" id="nf-tia-ip" name="nf-tia-ip" class="form-control">
+              <button class="btn btn-primary w-100" id="connect-oscilloscope-btn">Connect</button>
+            </div>
+            <div class="col-md-4">
+              <h4>NF TIA</h4>
+              <div class="form-group">
+                <label for="nf-tia-ip">IP:</label>
+                <input type="text" id="nf-tia-ip" name="nf-tia-ip" class="form-control">
+              </div>
+              <div class="row">
+                <div class="col-sm-6">
+                  <button class="btn btn-primary w-100" id="connect-nf-tia-btn">Connect</button>
                 </div>
-                <div class="row">
-                  <div class="col-sm-6">
-                    <button class="btn btn-primary w-100" id="connect-nf-tia-btn">Connect</button>
-                  </div>
-                  <div class="col-sm-6">
-                    <button class="btn btn-primary w-100" id="zero-nf-tia-btn">Zero</button>
-                  </div>
+                <div class="col-sm-6">
+                  <button class="btn btn-primary w-100" id="zero-nf-tia-btn">Zero</button>
                 </div>
               </div>
             </div>
@@ -74,42 +72,40 @@
 
       <div id="analysis-tab" class="tab-pane fade show">
         <div class="tab-content-wrapper">
-          <div class="container-fluid">
-            <h3>Analysis</h3>
-            <div class="row">
-              <div class="col-4">
-                <!-- File path input -->
-                <div class="form-group">
-                  <label for="file-path">File Path:</label>
-                  <input type="text" id="file-path" name="file-path" class="form-control">
-                </div>
-                <!-- Multi-select -->
-                <div class="form-group">
-                  <select id="multi-select" name="multi-select" multiple size="10" class="form-control">
-                    <option value="option0">Option 0</option>
-                    <!-- Add more options as needed -->
-                  </select>
-                </div>
-                <!-- Label-input pairs -->
-                <div class="form-group">
-                  <label for="binning">Binning:</label>
-                  <input type="number" id="binning" name="binning" class="form-control">
-                </div>
-                <div class="form-group">
-                  <label for="gain">Gain (Ω):</label>
-                  <input type="number" id="gain" name="gain" class="form-control">
-                </div>
-                <div class="form-group">
-                  <label for="area">Area (μm<sup>2</sup>):</label>
-                  <input type="number" id="area" name="area" class="form-control">
-                </div>
+          <h3>Analysis</h3>
+          <div class="row">
+            <div class="col-4">
+              <!-- File path input -->
+              <div class="form-group">
+                <label for="file-path">File Path:</label>
+                <input type="text" id="file-path" name="file-path" class="form-control">
               </div>
-              <div class="col-8">
-                  <!-- Plotly plot areas -->
-                <div class="plot-container">
-                  <div id="plot1" class="plot"></div>
-                  <div id="plot2" class="plot"></div>
-                </div>
+              <!-- Multi-select -->
+              <div class="form-group">
+                <select id="multi-select" name="multi-select" multiple size="10" class="form-control">
+                  <option value="option0">Option 0</option>
+                  <!-- Add more options as needed -->
+                </select>
+              </div>
+              <!-- Label-input pairs -->
+              <div class="form-group">
+                <label for="binning">Binning:</label>
+                <input type="number" id="binning" name="binning" class="form-control">
+              </div>
+              <div class="form-group">
+                <label for="gain">Gain (Ω):</label>
+                <input type="number" id="gain" name="gain" class="form-control">
+              </div>
+              <div class="form-group">
+                <label for="area">Area (μm<sup>2</sup>):</label>
+                <input type="number" id="area" name="area" class="form-control">
+              </div>
+            </div>
+            <div class="col-8">
+                <!-- Plotly plot areas -->
+              <div class="plot-container">
+                <div id="plot1" class="plot"></div>
+                <div id="plot2" class="plot"></div>
               </div>
             </div>
           </div>

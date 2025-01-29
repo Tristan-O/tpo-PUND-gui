@@ -27,12 +27,26 @@ body {
   margin-top: 10px;
 }
 
+.nav-tabs {
+  border-color: #444;
+}
+.nav-tabs .nav-item a.nav-link {
+  background-color: #202020;
+  border-color: #444;
+  color: #e0e0e0;
+}
+
+.nav-tabs .nav-item a.nav-link.active {
+  background-color: #303030;
+  border-bottom-color: #303030;
+}
+
 .tab-content {
   margin-bottom: 10px;
   padding: 10px;
   border: 1px solid #444;
   border-top: none;
-  background-color: #1e1e1e;
+  background-color: #303030;
   color: #e0e0e0;
 }
 
