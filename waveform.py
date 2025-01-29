@@ -81,6 +81,8 @@ class WF_Block_Base(State):
         raise NotImplementedError
     def add_child(self, child):
         raise NotImplementedError
+    def get_labels(self, sample_rate:float, offset:float=0, lblfmt:str='{prefix}.{suffix}')->dict[str,slice]:
+        return {}
 
 class WF_Block_PUND(WF_Block_Base):
     '''A PUND waveform. Equivalent to making the amplitude negative.
@@ -126,6 +128,28 @@ class WF_Block_PUND(WF_Block_Base):
                                                 - quarter_PUND(t, rise_time, rise_time*8+delay_time*4, 2) \
                                                 - quarter_PUND(t, rise_time, rise_time*8+delay_time*4, 3)
         return self.offset + self.amplitude*pund(time, self.rise_time, self.delay_time)
+    def get_labels(self, sample_rate:float, offset:float=0, lblfmt:str='{prefix}.{suffix}')->dict[str,slice]:
+        d = dict()
+        T = 4*self.delay_time + 8*self.rise_time # wf period
+        length = self.n_cycles*T/sample_rate # array length at this sampling rate
+        pulse_len = 2*self.rise_time/sample_rate # array length of a pulse
+        start = offset/sample_rate # starting idx
+
+        if self.amplitude > 0: # if labels will be drawn from PUND or NDPU string
+            pre = 'PUND'
+        elif self.amplitude < 0:
+            pre = 'NDPU'
+        else:
+            return d # no labels for a flat wf
+
+        for n in np.arange(self.n_cycles):
+            for p in range(4):
+                stop  = start + pulse_len # stopping idx
+                if stop > length:
+                    break
+                d[lblfmt.format(prefix=pre[p], suffix=int(n))] = slice(int(start), int(stop))
+                start += (2*self.rise_time + self.delay_time)/sample_rate
+        return d
 
 class WF_Block_Sine(WF_Block_Base):
     '''A sine waveform.
@@ -213,6 +237,12 @@ class WF_Block_Collection(WF_Block_Base):
     def add_child(self, child:WF_Block_Base):
         assert isinstance(child, WF_Block_Base), f'Expected a child instance of WF_Block_Base, but got {type(child)}!'
         super(WF_Block_Base, self).add_child(child) # do not use WF_Block_Base's add_child method (which will just raise an error). Use State's.
+    def get_labels(self, sample_rate:float, offset:float=0, lblfmt:str='{prefix}.{childIdx}.{suffix}')->dict[str,slice]:
+        d = dict()
+        for i,block in enumerate(self._children):
+            d.update(block.get_labels(sample_rate, offset, lblfmt.format(childIdx=i)))
+            offset += block.get_time_array()[-1]
+        return d
 
 
 # TODO
