@@ -42,13 +42,13 @@ def py_new_wf_block(tabId:str, channel:int, block_type:str):
     collection.add_child( waveform_classes[block_type]() )
 
 @eel.expose
-def py_get_TemplatesettingsWF(tabId:str, channel:int, blockIdx:int):
+def py_get_wf_block_settings(tabId:str, channel:int, blockIdx:int):
     tab = state.find_child_by_id(tabId)
     block = tab[channel-1][blockIdx]
     res = block.to_dict()
     return res
 @eel.expose
-def py_set_TemplatesettingsWF(tabId:str, channel:int, blockIdx:int, blockSettings:dict):
+def py_set_wf_block_settings(tabId:str, channel:int, blockIdx:int, blockSettings:dict):
     tab = state.find_child_by_id(tabId)
     print(blockSettings)
     tab[channel-1][blockIdx] = tab[channel-1][blockIdx].__class__.from_dict(blockSettings)

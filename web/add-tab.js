@@ -51,7 +51,7 @@ $(document).ready(function() {
     $('#tab-content').on('click', '.waveform-block i.edit-waveform-block', async function() {
         const tabId = get_enclosing_tab_id($(this));
         const channel = $(this).closest('.awg-settings').data('channel');
-        const wfType = $(this).closest('.waveform-block').find('.type-waveform-block').text();
+        const wfType = $(this).closest('.waveform-block').data('wftype');
         const blockIdx = $(this).closest('.waveform-block').index();
 
         console.log("edit clicked!", tabId, channel, blockIdx, wfType);
@@ -146,7 +146,7 @@ async function refresh_wf_preview(tabId) {
 }
 
 function add_wf_block(tabId, channel, wfType) {
-    const $newBlock = $('<div class="waveform-block"></div>')
+    const $newBlock = $(`<div class="waveform-block" data-wftype=${wfType}></div>`)
     console.log($(`#${tabId}`).find(`.awg-settings.channel-${channel} .waveform-block-wrapper`));
     $(`#${tabId}`).find(`.awg-settings.channel-${channel} .waveform-block-wrapper`).append($newBlock)
     $newBlock.load('waveform-block.html', function() {
