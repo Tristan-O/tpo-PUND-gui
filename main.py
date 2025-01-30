@@ -4,7 +4,10 @@ from templatewf import TemplateBaseWF, TemplateCollectionWF
 
 
 STATEDIR = './.states/'
-
+try:
+    rm = pyvisa.ResourceManager()
+except:
+    rm = None
 
 eel.init('web')
 try:
@@ -18,6 +21,13 @@ waveform_classes = {cls.__name__:cls for cls in TemplateBaseWF._get_all_subclass
 @eel.expose
 def py_get_state():
     return state.to_dict()
+@eel.expose
+def py_get_available_resources():
+    if rm is None:
+        return []
+    else:
+        print(rm.list_resources_info())
+        return rm.list_resources()
 
 @eel.expose
 def py_new_tab(id, name, awg, oscilloscope, tia, dut):

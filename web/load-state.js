@@ -13,6 +13,10 @@ $(document).ready(async function() {
         });
     });
 
+    let rsrcs = await eel.py_get_available_resources()();
+    for (let index = 0; index < rsrcs.length; index++) {
+        $('#available-resources').append(`<option>${rsrcs[index]}</option>`)
+    }
 
 });
 

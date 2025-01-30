@@ -34,28 +34,32 @@
         <div class="tab-content-wrapper">
           <h3>Device Connections</h3>
           <button class="btn btn-primary" id="test-connections">Test Connections</button>
+          <datalist id="available-resources"></datalist> <!-- All available connections should go here -->
           <div class="row mt-5">
             <div class="col-md-4">
               <h4>AWG</h4>
+              <h6>Rigol DG2102</h6>
               <div class="form-group">
                 <label for="awg-ip">IP:</label>
-                <input type="text" id="awg-ip" name="awg-ip" class="form-control">
+                <input type="text" id="awg-ip" name="awg-ip" class="form-control" list="available-resources">
               </div>
               <button class="btn btn-primary w-100" id="connect-awg-btn">Connect</button>
             </div>
             <div class="col-md-4">
               <h4>Oscilloscope</h4>
+              <h6>Rigol DHO1074</h6>
               <div class="form-group">
                 <label for="oscilloscope-ip">IP:</label>
-                <input type="text" id="oscilloscope-ip" name="oscilloscope-ip" class="form-control">
+                <input type="text" id="oscilloscope-ip" name="oscilloscope-ip" class="form-control" list="available-resources">
               </div>
               <button class="btn btn-primary w-100" id="connect-oscilloscope-btn">Connect</button>
             </div>
             <div class="col-md-4">
-              <h4>NF TIA</h4>
+              <h4>TIA</h4>
+              <h6>NF CA5351</h6>
               <div class="form-group">
                 <label for="nf-tia-ip">IP:</label>
-                <input type="text" id="nf-tia-ip" name="nf-tia-ip" class="form-control">
+                <input type="text" id="nf-tia-ip" name="nf-tia-ip" class="form-control" list="available-resources">
               </div>
               <div class="row">
                 <div class="col-sm-6">
