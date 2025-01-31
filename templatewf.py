@@ -1,39 +1,55 @@
 import numpy as np
-from app_base import AppState
+from app_base import TemplateWF, _Parent
 
 
-class TemplateBaseWF(AppState):
-    '''Abstract base class instructions.'''
-    def get_skeleton(self)->tuple[np.ndarray, np.ndarray]:
-        raise NotImplementedError
-    def get_time_array(self, sample_rate:float)->np.ndarray:
-        '''Get an array of times corresponding to this block, for the specified sample rate'''
-        raise NotImplementedError
-    def sample_wf(self, sample_rate:float)->np.ndarray:
-        '''Get an array of values corresponding to this block, for the specified sample rate'''
-        raise NotImplementedError
-    def add_child(self, child):
-        '''Append child. This is here to block inheritance from AppState'''
-        raise AttributeError(f"type object '{self.__class__.__name__}' has no attribute 'add_child', because it should not have children.")
-    def get_labels(self, sample_rate:float, offset:float=0, lblfmt:str='{prefix}.{suffix}')->dict[str,slice]:
-        '''Get slices that correspond to ROIs of this waveform'''
-        return {}
+class CollectionTemplateWF(_Parent, TemplateWF):
+    '''This is a special class. It represents a collection of other TemplateWF instances.
+    The multiple inheritance here pulls from _Parent first if it can, then TemplateWF'''
+    def __init__(self, *blocks:TemplateWF):
+        super().__init__()
+        self._children:list[TemplateWF]
+        for block in blocks:
+            self.add_child(child=block)
+    def get_skeleton(self):
+        t = [0]
+        v = []
+        for i,block in enumerate(self._children):
+            t_,v_ = block.get_skeleton()
+            if i>0: # exclude first point for subsequent blocks
+                t_ = t_[1:]
+                v_ = v_[1:]
+            t.extend( (t_+t[-1]).tolist() )
+            v.extend( v_.tolist() )
+        return np.array(t[1:]), np.array(v)
+    def get_time_array(self, sample_rate:float):
+        total_len = np.sum([len(block.get_time_array()) for block in self.blocks])
+        return np.arange(0, total_len/sample_rate, 1/sample_rate)
+    def sample(self, sample_rate:float):
+        return np.concat( [block.sample_wf(sample_rate) for block in self.blocks] )
+    def add_child(self, child:TemplateWF):
+        assert isinstance(child, TemplateWF), f'Expected a child instance of TemplateWF, but got {type(child)}!'
+        super().add_child(child)
+    def get_ROIs(self, sample_rate:float, offset:float=0, lblfmt:str='{prefix}.{childIdx}.{suffix}')->dict[str,slice]:
+        d = dict()
+        for i,block in enumerate(self._children):
+            d.update(block.get_ROIs(sample_rate, offset, lblfmt.format(childIdx=i)))
+            offset += block.get_time_array()[-1]
+        return d
 
 
-class TemplatePUNDWF(TemplateBaseWF):
+class PUNDTemplateWF(TemplateWF):
     '''A PUND waveform. Equivalent to making the amplitude negative.
     Cannot have children.'''
     _selector = 'pund'
     def to_dict(self):
         return dict(_type=self.__class__.__name__,
-                    name=self.name, 
                     amplitude=self.amplitude, 
                     rise_time=self.rise_time, 
                     delay_time=self.delay_time, 
                     n_cycles=self.n_cycles, 
                     offset=self.offset)
-    def __init__(self, name:str='', amplitude:float=1.0, rise_time:float=350e-6, delay_time:float=350e-6, n_cycles:float=4., offset:float=0.):
-        super().__init__(name=name)
+    def __init__(self, amplitude:float=1.0, rise_time:float=350e-6, delay_time:float=350e-6, n_cycles:float=4., offset:float=0.):
+        super().__init__()
         self.amplitude = amplitude
         self.rise_time = rise_time
         self.delay_time = delay_time
@@ -66,7 +82,7 @@ class TemplatePUNDWF(TemplateBaseWF):
                                                 - quarter_PUND(t, rise_time, rise_time*8+delay_time*4, 2) \
                                                 - quarter_PUND(t, rise_time, rise_time*8+delay_time*4, 3)
         return self.offset + self.amplitude*pund(time, self.rise_time, self.delay_time)
-    def get_labels(self, sample_rate:float, offset:float=0, lblfmt:str='{prefix}.{suffix}')->dict[str,slice]:
+    def get_ROIs(self, sample_rate:float, offset:float=0, lblfmt:str='{prefix}.{suffix}')->dict[str,slice]:
         d = dict()
         T = 4*self.delay_time + 8*self.rise_time # wf period
         length = self.n_cycles*T/sample_rate # array length at this sampling rate
@@ -90,19 +106,18 @@ class TemplatePUNDWF(TemplateBaseWF):
         return d
 
 
-class TemplateSineWF(TemplateBaseWF):
+class SineTemplateWF(TemplateWF):
     '''A sine waveform.
     Cannot have children.'''
     def to_dict(self):
         return dict(_type=self.__class__.__name__,
-                    name=self.name, 
                     amplitude=self.amplitude,
                     freq=self.freq,
                     n_cycles=self.n_cycles,
                     offset=self.offset,
                     phase=self.phase)
-    def __init__(self, name:str='', amplitude:float=1.0, freq:float=1000, n_cycles:float=4., offset:float=0., phase:float=0.):
-        super().__init__(name=name)
+    def __init__(self, amplitude:float=1.0, freq:float=1000, n_cycles:float=4., offset:float=0., phase:float=0.):
+        super().__init__()
         self.amplitude = amplitude
         self.freq = freq
         self.n_cycles = n_cycles
@@ -117,16 +132,15 @@ class TemplateSineWF(TemplateBaseWF):
         return self.amplitude * np.sin(2*np.pi*self.freq*self.get_time_array(sample_rate) - self.phase) + self.offset
 
 
-class TemplateConstantWF(TemplateBaseWF):
+class ConstantTemplateWF(TemplateWF):
     '''A constant waveform for a specified duration.
     Cannot have children.'''
     def to_dict(self):
         return dict(_type=self.__class__.__name__,
-                    name=self.name, 
                     value=self.value,
                     duration=self.duration)
-    def __init__(self, name:str='', value:float=0, duration:float=1e-3):
-        super().__init__(name=name)
+    def __init__(self, value:float=0, duration:float=1e-3):
+        super().__init__()
         self.value = value
         self.duration= duration
     def get_skeleton(self):
@@ -137,15 +151,14 @@ class TemplateConstantWF(TemplateBaseWF):
         return self.value * np.ones(len(self.get_time_array(sample_rate)))
 
 
-class TemplateArbitraryWF(TemplateBaseWF):
+class ArbitraryTemplateWF(TemplateWF):
     '''Block for holding arbitrary waveforms, more than just those predefined here.'''
     def to_dict(self):
         return dict(_type=self.__class__.__name__,
-                    name=self.name, 
                     values=self.values,
                     init_sample_rate=self.init_sample_rate)
-    def __init__(self, name:str='', values:np.ndarray=[], init_sample_rate:float=1):
-        super().__init__(name=name)
+    def __init__(self, values:np.ndarray=[], init_sample_rate:float=1):
+        super().__init__()
         self.values = np.array(values)
         self.init_sample_rate = init_sample_rate
     def get_skeleton(self):
@@ -159,42 +172,12 @@ class TemplateArbitraryWF(TemplateBaseWF):
             raise NotImplementedError('Interpolation of arbitrary waveforms not yet supported')
 
 
-class TemplateCollectionWF(TemplateBaseWF):
-    '''This is a special class. It represents a collection of other TemplateBaseWF instances.'''
-    def __init__(self, name:str='', *blocks:TemplateBaseWF):
-        super().__init__(name=name)
-        self._children:list[TemplateBaseWF]
-        for block in blocks:
-            self.add_child(child=block)
-    def get_skeleton(self):
-        t = [0]
-        v = []
-        for i,block in enumerate(self._children):
-            t_,v_ = block.get_skeleton()
-            if i>0: # exclude first point for subsequent blocks
-                t_ = t_[1:]
-                v_ = v_[1:]
-            t.extend( (t_+t[-1]).tolist() )
-            v.extend( v_.tolist() )
-        return np.array(t[1:]), np.array(v)
-    def get_time_array(self, sample_rate:float):
-        total_len = np.sum([len(block.get_time_array()) for block in self.blocks])
-        return np.arange(0, total_len/sample_rate, 1/sample_rate)
-    def sample(self, sample_rate:float):
-        return np.concat( [block.sample_wf(sample_rate) for block in self.blocks] )
-    def add_child(self, child:TemplateBaseWF):
-        assert isinstance(child, TemplateBaseWF), f'Expected a child instance of TemplateBaseWF, but got {type(child)}!'
-        super(TemplateBaseWF, self).add_child(child) # do not use TemplateBaseWF's add_child method (which will just raise an error). Use AppState's.
-    def get_labels(self, sample_rate:float, offset:float=0, lblfmt:str='{prefix}.{childIdx}.{suffix}')->dict[str,slice]:
-        d = dict()
-        for i,block in enumerate(self._children):
-            d.update(block.get_labels(sample_rate, offset, lblfmt.format(childIdx=i)))
-            offset += block.get_time_array()[-1]
-        return d
-
 
 # TODO
-class TemplateTriangleWF(TemplateBaseWF):
+class TriangleTemplateWF(TemplateWF):
     pass
-class TemplateSquareWF(TemplateBaseWF):
+class SquareTemplateWF(TemplateWF):
     pass
+
+
+wf_class_dict = {cls.__name__:cls for cls in TemplateWF._get_all_subclasses()} # used for creating new waveform blocks

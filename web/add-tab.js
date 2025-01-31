@@ -7,8 +7,6 @@ $(document).ready(function() {
         let thisIdx = $(this).closest('li').index();
         $('#analysis-tab').tab('show');
         $('#tab-list').find('a')[0].click();
-        console.log(thisIdx)
-        console.log( $($('#tab-list').find('li')[thisIdx-1]).find('a') )
 
         $(this).closest('li').remove();
         eel.py_close_tab($(tabSelector).attr('id'))();
@@ -35,6 +33,7 @@ $(document).ready(function() {
     // Delete waveform block
     $('#tab-content').on('click', '.waveform-block i.delete-waveform-block', async function() {
         console.log("delete clicked!");
+
         let $wfBlock = $(this).closest('.waveform-block');
         const tabId = get_enclosing_tab_id($wfBlock);
         const channel = $wfBlock.closest('.awg-settings').data('channel');
@@ -49,12 +48,13 @@ $(document).ready(function() {
 
     // Edit waveform block
     $('#tab-content').on('click', '.waveform-block i.edit-waveform-block', async function() {
+        console.log("edit clicked!");
+
         const tabId = get_enclosing_tab_id($(this));
         const channel = $(this).closest('.awg-settings').data('channel');
         const wfType = $(this).closest('.waveform-block').data('wftype');
         const blockIdx = $(this).closest('.waveform-block').index();
 
-        console.log("edit clicked!", tabId, channel, blockIdx, wfType);
         let blockSettings = await eel.py_get_wf_block_settings(tabId, channel, blockIdx)();
         let popup = $(`#editor-${wfType}`);
         for (const [key, value] of Object.entries(blockSettings)) {
@@ -65,13 +65,11 @@ $(document).ready(function() {
         // Tie popup actions to this particular block
         popup.find('.accept-waveform-parameters').off('click')
         popup.find('.accept-waveform-parameters').on('click', async function() {
-            console.log(blockSettings)
             for (const [key, value] of Object.entries(blockSettings)) {
                 if (popup.find(`.waveform-parameter[name=${key}]`).length) { // don't change value if key is not an element in the popup, e.g. _type
                     blockSettings[key] = parseFloat(popup.find(`.waveform-parameter[name=${key}]`).val());
                 }
             };
-            console.log(blockSettings)
             await eel.py_set_wf_block_settings(tabId, channel, blockIdx, blockSettings)();
             await refresh_wf_preview(tabId);
             popup.css('display', 'none');
@@ -123,15 +121,15 @@ $(document).ready(function() {
     });
 
     // Upload waveform
-    $('#tab-content').on('click', '.waveform-send', async function() {
+    $('#tab-content').on('click', '.configure-devices', async function() {
         const tabId = get_enclosing_tab_id($(this));
         let success = await eel.py_send_waveform(tabId)();
         if (success) { // Apply some styles to the tab that has been sent
-            $('.waveform-send').removeClass('btn-success')
+            $('.configure-devices').removeClass('btn-success')
             $(this).addClass('btn-success')
 
-            $('a.nav-link').removeClass('sent-waveform-tab')
-            $(`a[href="#${tabId}"]`).addClass('sent-waveform-tab')
+            $('a.nav-link').removeClass('configured-devices-tab')
+            $(`a[href="#${tabId}"]`).addClass('configured-devices-tab')
         }
     });
 
@@ -175,9 +173,11 @@ async function refresh_wf_preview(tabId) {
             l: 50,
             r: 50,
             b: 50,
-            t: 80
+            t: 50
         },
-        paper_bgcolor: '#222',
+        pad: 10,
+        autosize: true,
+        paper_bgcolor: '#282828',
         plot_bgcolor: '#333'
     };
 
@@ -185,18 +185,15 @@ async function refresh_wf_preview(tabId) {
         responsive: true
     }
     
-    console.log(data)
-    Plotly.newPlot($(`#${tabId} .waveform-preview`)[0], data, layout, config);
+    Plotly.newPlot($(`#${tabId} .plot-container`)[0], data, layout, config);
 }
 
 function add_wf_block(tabId, channel, wfType) {
     const $newBlock = $(`<div class="waveform-block" data-wftype=${wfType}></div>`)
-    console.log($(`#${tabId}`).find(`.awg-settings.channel-${channel} .waveform-block-wrapper`));
     $(`#${tabId}`).find(`.awg-settings.channel-${channel} .waveform-block-wrapper`).append($newBlock)
     $newBlock.load('waveform-block.html', function() {
         $newBlock.find('.type-waveform-block').text(
             $(`#${tabId} .channel-${channel} option[value="${wfType}"]`).text()
         );
-        console.log('loaded!', tabId, channel, wfType)
     }); // the things in this function occur AFTER the loading has finished.
 }

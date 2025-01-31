@@ -1,40 +1,47 @@
 import eel, os, pyvisa, json, sys, time, pprint
-from app_base import AppState, Tab
-from templatewf import TemplateBaseWF, TemplateCollectionWF
+from app_base import (AppState, Tab,
+                      DUTSettings,
+                      AWGChannelSettings, AWGSettings,
+                      OscilloscopeChannelSettings, OscilloscopeSettings,)
+from templatewf import wf_class_dict
 
 
 STATEDIR = './.states/'
+state:AppState
 try:
     rm = pyvisa.ResourceManager()
 except:
     rm = None
 
 eel.init('web')
-try:
-    state_files = sorted([f for f in os.listdir(STATEDIR) if os.path.isfile(os.path.join(STATEDIR,f))])
-    with open(os.path.join(STATEDIR,state_files[-1])) as f:
-        state = AppState.from_dict(json.load(f))
-except:
-    state = AppState()
-waveform_classes = {cls.__name__:cls for cls in TemplateBaseWF._get_all_subclasses()} # used for creating new waveform blocks
+
 
 @eel.expose
-def py_get_state():
-    return state.to_dict()
+def py_update_state(d:dict|None=None):
+    global state
+    if d is None:
+        if not os.path.exists(STATEDIR):
+            os.mkdir(STATEDIR)
+        state_files = sorted([f for f in os.listdir(STATEDIR) if os.path.isfile(os.path.join(STATEDIR,f))])
+        if len(state_files) > 0:
+            with open(os.path.join(STATEDIR,state_files[-1])) as f:
+                state = AppState.from_dict(json.load(f))
+        else:
+            state = AppState()
+    else:
+        state = AppState.from_dict(d)
+    return state.to_dict() # return so that frontend has inputs, corrected
 @eel.expose
 def py_get_available_resources():
     if rm is None:
         return []
     else:
-        print(rm.list_resources_info())
         return rm.list_resources()
 
 @eel.expose
-def py_new_tab(id, name, awg, oscilloscope, tia, dut):
-    tab =  Tab(id, name, awg, oscilloscope, tia, dut)
+def py_new_tab(d:dict):
+    tab = Tab.from_dict(d)
     state.add_child(tab)
-    tab.add_child(TemplateCollectionWF(name='ch1')) # CH1
-    tab.add_child(TemplateCollectionWF(name='ch2')) # CH2
 
 @eel.expose
 def py_close_tab(id):
@@ -44,7 +51,7 @@ def py_close_tab(id):
 def py_new_wf_block(tabId:str, channel:int, block_type:str):
     tab = state.find_child_by_id(tabId)
     collection = tab[channel-1]
-    collection.add_child( waveform_classes[block_type]() )
+    collection.add_child( wf_class_dict[block_type]() )
 @eel.expose
 def py_delete_wf_block(tabId:str, channel:int, blockIdx:int):
     tab = state.find_child_by_id(tabId)
@@ -99,13 +106,13 @@ def close(*args, **kwargs):
     # print('Application state upon closing:')
     # pprint.pprint(d)
 
-    ofname = f'./.states/app-state-{time.time()}.json'
-    if not os.path.exists('./.states'):
-        os.mkdir('./.states/')
-    with open(ofname, 'w') as f:
-        json.dump(d, f, indent=4)
+    ofname = f'{STATEDIR}/app-state-{time.time()}.json'
+    if not os.path.exists(STATEDIR):
+        os.mkdir(STATEDIR)
+    # with open(ofname, 'w') as f:
+    #     json.dump(d, f, indent=4)
     
-    print(f'State saved to {ofname}')
+    # print(f'State saved to {ofname}')
     sys.exit()
 
 

@@ -5,144 +5,171 @@
 </head>
 <body>
     <div class="row">
-        <div class="col-md-8 column">
-            <h3>AWG</h3>
-            <div class="row">
-                <div class="col-md-6 column awg-settings channel-1" data-channel="1">
-                    <h4>CH1</h4>
-                    <div class="form-group">
-                        <label>Sample rate (Hz):</label>
-                        <input type="number" name="sample-rate" class="form-control awg-parameter">
+        <div class="col-md-8">
+            <div class="device-settings">
+                <h3>AWG</h3>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group awg-settings channel-1" data-channel="1">
+                            <h4>CH1</h4>
+                            <label>Sample rate (Hz):</label>
+                            <input type="number" name="sample-rate" class="form-control awg-parameter">
+                            <div class="waveform-block-wrapper">
+                                <!-- Blocks will be added here -->
+                            </div>
+                            <select class="form-control waveform-block-adder">
+                                <!-- values here are python backend class names -->
+                                <option value="">Add Block</option>
+                                <option value="PUNDTemplateWF">PUND</option>
+                                <option value="SineTemplateWF">Sine</option>
+                                <option value="ConstantTemplateWF">Constant</option>
+                                <option value="SquareTemplateWF">Square (TODO)</option>
+                                <option value="TriangleTemplateWF">Triangle (TODO)</option>
+                                <option value="ArbitraryTemplateWF">Load from CSV (TODO)</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="waveform-block-wrapper">
-                        <!-- Blocks will be added here -->
+
+                    <div class="col-md-6">
+                        <div class="form-group awg-settings channel-2" data-channel="2">
+                            <h4>CH2</h4>
+                            <label>Sample rate (Hz):</label>
+                            <input type="number" name="sample-rate" class="form-control awg-parameter">
+                            <div class="waveform-block-wrapper">
+                                <!-- Blocks will be added here -->
+                            </div>
+                            <select class="form-control waveform-block-adder">
+                                <!-- values here are python backend class names -->
+                                <option value="">Add Block</option>
+                                <option value="PUNDTemplateWF">PUND</option> 
+                                <option value="SineTemplateWF">Sine</option>
+                                <option value="ConstantTemplateWF">Constant</option>
+                                <option value="SquareTemplateWF">Square (TODO)</option>
+                                <option value="TriangleTemplateWF">Triangle (TODO)</option>
+                                <option value="ArbitraryTemplateWF">Load from CSV (TODO)</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <select class="form-control waveform-block-adder" value="">
-                            <!-- values here are python class names -->
-                            <option value="">Add Block</option>
-                            <option value="TemplatePUNDWF">PUND</option>
-                            <option value="TemplateSineWF">Sine</option>
-                            <option value="TemplateConstantWF">Constant</option>
-                            <option value="TemplateSquareWF">Square (TODO)</option>
-                            <option value="TemplateTriangleWF">Triangle (TODO)</option>
-                            <option value="TemplateArbitraryWF">Load from CSV (TODO)</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-6 column awg-settings channel-2" data-channel="2">
-                    <h4>CH2</h4>
-                    <div class="form-group">
-                        <label>Sample rate (Hz):</label>
-                        <input type="number" name="sample-rate" class="form-control awg-parameter">
-                    </div>
-                    <div class="waveform-block-wrapper">
-                        <!-- Blocks will be added here -->
-                    </div>
-                    <div class="form-group">
-                        <select class="form-control waveform-block-adder" value="">
-                            <!-- values here are python class names -->
-                            <option value="">Add Block</option>
-                            <option value="TemplatePUNDWF">PUND</option> 
-                            <option value="TemplateSineWF">Sine</option>
-                            <option value="TemplateConstantWF">Constant</option>
-                            <option value="TemplateSquareWF">Square (TODO)</option>
-                            <option value="TemplateTriangleWF">Triangle (TODO)</option>
-                            <option value="TemplateArbitraryWF">Load from CSV (TODO)</option>
-                        </select>
-                    </div>
+
                 </div>
             </div>
-            
+
             <div class="row">
                 <div class="col-12">
                     <!-- plotly plot -->
-                    <div class="waveform-preview"></div> 
-                    <button class="btn btn-primary w-100 waveform-send">Send to AWG</button>
+                    <div class="plot-container"></div> 
                 </div>
             </div>
 
         </div>
-        <div class="col-md-4 column">
-            <div class="nf-tia-settings">
+        <div class="col-md-4">
+            <div class="nf-tia-settings device-settings">
                 <h3>NF TIA</h3>
-                <div class="row">
-                    <div class="col-6">
-                        <div class="form-group">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-6">
                             <label>Gain (Ω):</label>
                             <input type="number" name="nf-tia-gain" class="form-control nf-tia-parameter">
                         </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="form-group">
+                        <div class="col-6">
                             <label>Bandwidth (us):</label>
                             <input type="number" name="nf-tia-gain" class="form-control nf-tia-parameter">
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="oscilloscope-settings">
+
+            <div class="oscilloscope-settings device-settings">
                 <h3>Oscilloscope</h3>
-                <h5>Time</h5>
-                <div class="row">
-                    <div class="col-6">
-                        <div class="form-group">
+                <div class="form-group">
+                    <h5>Time</h5>
+                    <div class="row">
+                        <div class="col-6">
                             <label>Sample rate (Hz):</label>
                             <input type="number" name="sample-rate" class="form-control oscilloscope-parameter" disabled="true">
                         </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="form-group">
+                        <div class="col-6">
                             <label>Trigger Delay:</label>
                             <input type="number" name="trigger-delay" class="form-control oscilloscope-parameter">
                         </div>
                     </div>
+                </div>
+                <div class="row">
                     <div class="col-6">
-                        <h5>CH1</h5>
                         <div class="form-group">
+                            <h5>CH1</h5>
                             <label>Range (V):</label>
                             <input type="number" name="range-ch1" class="form-control oscilloscope-parameter">
-                        </div>
-                        <div class="form-group">
-                            <label>Transimp (Ω):</label>
-                            <input type="number" name="transimpedance-ch1" class="form-control oscilloscope-parameter">
+                            <select class="oscilloscope-source">
+                                <option value="none"> No Source</option>
+                                <option value="awg-ch1"> AWG CH1</option>
+                                <option value="awg-ch2"> AWG CH2</option>
+                                <option value="tia"> TIA</option>
+                                <option value="other"> Other</option>
+                            </select>
+                            <div class="tia-transimpedance">
+                                <label>Transimp (Ω)</label>
+                                <input type="number" class="form-control">
+                            </div>
                         </div>
                     </div>
                     <div class="col-6">
-                        <h5>CH2</h5>
                         <div class="form-group">
+                            <h5>CH2</h5>
                             <label>Range (V):</label>
                             <input type="number" name="range-ch2" class="form-control oscilloscope-parameter">
-                        </div>
-                        <div class="form-group">
-                            <label>Transimp (Ω):</label>
-                            <input type="number" name="transimpedance-ch2" class="form-control oscilloscope-parameter">
+                            <select class="oscilloscope-source">
+                                <option value="none">No Source</option>
+                                <option value="awg-ch1">AWG CH1</option>
+                                <option value="awg-ch2">AWG CH2</option>
+                                <option value="tia">TIA</option>
+                                <option value="other">Other</option>
+                            </select>
+                            <div class="tia-transimpedance">
+                                <label>Transimp (Ω)</label>
+                                <input type="number" class="form-control">
+                            </div>
                         </div>
                     </div>
                     <div class="col-6">
-                        <h5>CH3</h5>
                         <div class="form-group">
+                            <h5>CH3</h5>
                             <label>Range (V):</label>
                             <input type="number" name="range-ch3" class="form-control oscilloscope-parameter">
-                        </div>
-                        <div class="form-group">
-                            <label>Transimp (Ω):</label>
-                            <input type="number" name="transimpedance-ch3" class="form-control oscilloscope-parameter">
+                            <select class="oscilloscope-source">
+                                <option value="none">No Source</option>
+                                <option value="awg-ch1">AWG CH1</option>
+                                <option value="awg-ch2">AWG CH2</option>
+                                <option value="tia">TIA</option>
+                                <option value="other">Other</option>
+                            </select>
+                            <div class="tia-transimpedance">
+                                <label>Transimp (Ω)</label>
+                                <input type="number" class="form-control">
+                            </div>
                         </div>
                     </div>
                     <div class="col-6">
-                        <h5>CH4</h5>
                         <div class="form-group">
+                            <h5>CH4</h5>
                             <label>Range (V):</label>
                             <input type="number" name="range-ch4" class="form-control oscilloscope-parameter">
-                        </div>
-                        <div class="form-group">
-                            <label>Transimp (Ω):</label>
-                            <input type="number" name="transimpedance-ch4" class="form-control oscilloscope-parameter">
+                            <select class="oscilloscope-source">
+                                <option value="none">No Source</option>
+                                <option value="awg-ch1">AWG CH1</option>
+                                <option value="awg-ch2">AWG CH2</option>
+                                <option value="tia">TIA</option>
+                                <option value="other">Other</option>
+                            </select>
+                            <div class="tia-transimpedance">
+                                <label>Transimp (Ω)</label>
+                                <input type="number" class="form-control">
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+            <button class="btn btn-primary w-100 configure-devices">Configure Devices</button>
         </div>
     </div>
 </body>
