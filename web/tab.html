@@ -6,15 +6,16 @@
 <body>
     <div class="row">
         <div class="col-md-8">
-            <div class="device-settings">
+            <div class="device-settings" data-py_id="" data-pyclassname="AWGSettings" data-pyparams="">
                 <h3>AWG</h3>
                 <div class="row">
                     <div class="col-md-6">
-                        <div class="form-group awg-settings channel-1" data-channel="1">
+                        <div class="form-group awg-settings" data-py_id="" data-pyclassname="AWGChannelSettings" data-channel="1" data-sample_rate="">
                             <h4>CH1</h4>
                             <label>Sample rate (Hz):</label>
-                            <input type="number" name="sample-rate" class="form-control awg-parameter">
-                            <div class="waveform-block-wrapper">
+                            <input type="number" class="form-control" data-pyparam="sample_rate">
+
+                            <div class="waveform-block-wrapper" data-py_id="" data-pyclassname="CollectionTemplateWF">
                                 <!-- Blocks will be added here -->
                             </div>
                             <select class="form-control waveform-block-adder">
@@ -31,11 +32,12 @@
                     </div>
 
                     <div class="col-md-6">
-                        <div class="form-group awg-settings channel-2" data-channel="2">
+                        <div class="form-group awg-settings" data-py_id="" data-pyclassname="AWGChannelSettings" data-channel="2" data-sample_rate="">
                             <h4>CH2</h4>
                             <label>Sample rate (Hz):</label>
-                            <input type="number" name="sample-rate" class="form-control awg-parameter">
-                            <div class="waveform-block-wrapper">
+                            <input type="number" class="form-control" data-pyparam="sample_rate">
+
+                            <div class="waveform-block-wrapper" data-py_id="" data-pyclassname="CollectionTemplateWF">
                                 <!-- Blocks will be added here -->
                             </div>
                             <select class="form-control waveform-block-adder">
@@ -56,51 +58,52 @@
 
             <div class="row">
                 <div class="col-12">
-                    <!-- plotly plot -->
-                    <div class="plot-container"></div> 
+                    <div class="plot-container-container">
+                        <div class="plot-container"></div> <!-- plotly plot, enclosed because of a weird issue -->
+                        </div>
                 </div>
             </div>
 
         </div>
         <div class="col-md-4">
-            <div class="nf-tia-settings device-settings">
+            <!-- <div class="device-settings" data-py_id="" data-pyclassname="TIASettings">
                 <h3>NF TIA</h3>
                 <div class="form-group">
                     <div class="row">
                         <div class="col-6">
                             <label>Gain (Ω):</label>
-                            <input type="number" name="nf-tia-gain" class="form-control nf-tia-parameter">
+                            <input type="number" name="nf-tia-gain" class="form-control parameter">
                         </div>
                         <div class="col-6">
                             <label>Bandwidth (us):</label>
-                            <input type="number" name="nf-tia-gain" class="form-control nf-tia-parameter">
+                            <input type="number" name="nf-tia-gain" class="form-control parameter">
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> -->
 
-            <div class="oscilloscope-settings device-settings">
+            <div class="device-settings" data-py_id="" data-pyclassname="OscilloscopeSettings" data-sample_rate="" data-trig_delay="">
                 <h3>Oscilloscope</h3>
                 <div class="form-group">
                     <h5>Time</h5>
                     <div class="row">
                         <div class="col-6">
                             <label>Sample rate (Hz):</label>
-                            <input type="number" name="sample-rate" class="form-control oscilloscope-parameter" disabled="true">
+                            <input type="number" name="sample-rate" class="form-control" data-pyparam="sample_rate">
                         </div>
                         <div class="col-6">
                             <label>Trigger Delay:</label>
-                            <input type="number" name="trigger-delay" class="form-control oscilloscope-parameter">
+                            <input type="number" name="trigger-delay" class="form-control" data-pyparam="trig_delay" value="0">
                         </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-6">
-                        <div class="form-group">
+                        <div class="form-group" data-py_id="" data-pyclassname="OscilloscopeChannelSettings" data-channel="1" data-vrange="" data-source="" data-transimpedance="">
                             <h5>CH1</h5>
                             <label>Range (V):</label>
-                            <input type="number" name="range-ch1" class="form-control oscilloscope-parameter">
-                            <select class="oscilloscope-source">
+                            <input type="number" class="form-control" data-pyparam="vrange">
+                            <select class="oscilloscope-source" data-pyparam="source">
                                 <option value="none"> No Source</option>
                                 <option value="awg-ch1"> AWG CH1</option>
                                 <option value="awg-ch2"> AWG CH2</option>
@@ -109,61 +112,61 @@
                             </select>
                             <div class="tia-transimpedance">
                                 <label>Transimp (Ω)</label>
-                                <input type="number" class="form-control">
+                                <input type="number" class="form-control" data-pyparam="transimpedance">
                             </div>
                         </div>
                     </div>
                     <div class="col-6">
-                        <div class="form-group">
+                        <div class="form-group" data-py_id="" data-pyclassname="OscilloscopeChannelSettings" data-channel="2" data-vrange="" data-source="No Source" data-transimpedance="">
                             <h5>CH2</h5>
                             <label>Range (V):</label>
-                            <input type="number" name="range-ch2" class="form-control oscilloscope-parameter">
-                            <select class="oscilloscope-source">
-                                <option value="none">No Source</option>
-                                <option value="awg-ch1">AWG CH1</option>
-                                <option value="awg-ch2">AWG CH2</option>
-                                <option value="tia">TIA</option>
-                                <option value="other">Other</option>
+                            <input type="number" class="form-control" data-pyparam="vrange">
+                            <select class="oscilloscope-source" data-pyparam="source">
+                                <option value="none"> No Source</option>
+                                <option value="awg-ch1"> AWG CH1</option>
+                                <option value="awg-ch2"> AWG CH2</option>
+                                <option value="tia"> TIA</option>
+                                <option value="other"> Other</option>
                             </select>
                             <div class="tia-transimpedance">
                                 <label>Transimp (Ω)</label>
-                                <input type="number" class="form-control">
+                                <input type="number" class="form-control" data-pyparam="transimpedance">
                             </div>
                         </div>
                     </div>
                     <div class="col-6">
-                        <div class="form-group">
+                        <div class="form-group" data-py_id="" data-pyclassname="OscilloscopeChannelSettings" data-channel="3" data-vrange="" data-source="No Source" data-transimpedance="">
                             <h5>CH3</h5>
                             <label>Range (V):</label>
-                            <input type="number" name="range-ch3" class="form-control oscilloscope-parameter">
-                            <select class="oscilloscope-source">
-                                <option value="none">No Source</option>
-                                <option value="awg-ch1">AWG CH1</option>
-                                <option value="awg-ch2">AWG CH2</option>
-                                <option value="tia">TIA</option>
-                                <option value="other">Other</option>
+                            <input type="number" class="form-control" data-pyparam="vrange">
+                            <select class="oscilloscope-source" data-pyparam="source">
+                                <option value="none"> No Source</option>
+                                <option value="awg-ch1"> AWG CH1</option>
+                                <option value="awg-ch2"> AWG CH2</option>
+                                <option value="tia"> TIA</option>
+                                <option value="other"> Other</option>
                             </select>
                             <div class="tia-transimpedance">
                                 <label>Transimp (Ω)</label>
-                                <input type="number" class="form-control">
+                                <input type="number" class="form-control" data-pyparam="transimpedance">
                             </div>
                         </div>
                     </div>
                     <div class="col-6">
-                        <div class="form-group">
+                        <div class="form-group" data-py_id="" data-pyclassname="OscilloscopeChannelSettings" data-channel="4" data-vrange="" data-source="No Source" data-transimpedance="">
                             <h5>CH4</h5>
                             <label>Range (V):</label>
-                            <input type="number" name="range-ch4" class="form-control oscilloscope-parameter">
-                            <select class="oscilloscope-source">
-                                <option value="none">No Source</option>
-                                <option value="awg-ch1">AWG CH1</option>
-                                <option value="awg-ch2">AWG CH2</option>
-                                <option value="tia">TIA</option>
-                                <option value="other">Other</option>
+                            <input type="number" class="form-control" data-pyparam="vrange">
+                            <select class="oscilloscope-source" data-pyparam="source">
+                                <option value="none"> No Source</option>
+                                <option value="awg-ch1"> AWG CH1</option>
+                                <option value="awg-ch2"> AWG CH2</option>
+                                <option value="tia"> TIA</option>
+                                <option value="other"> Other</option>
                             </select>
                             <div class="tia-transimpedance">
                                 <label>Transimp (Ω)</label>
-                                <input type="number" class="form-control">
+                                <input type="number" class="form-control" data-pyparam="transimpedance">
                             </div>
                         </div>
                     </div>

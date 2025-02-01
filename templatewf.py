@@ -1,8 +1,8 @@
 import numpy as np
-from app_base import TemplateWF, _Parent
+from app_base import TemplateWF, _BaseParent
 
 
-class CollectionTemplateWF(_Parent, TemplateWF):
+class CollectionTemplateWF(_BaseParent, TemplateWF):
     '''This is a special class. It represents a collection of other TemplateWF instances.
     The multiple inheritance here pulls from _Parent first if it can, then TemplateWF'''
     def __init__(self, *blocks:TemplateWF):
@@ -35,6 +35,9 @@ class CollectionTemplateWF(_Parent, TemplateWF):
             d.update(block.get_ROIs(sample_rate, offset, lblfmt.format(childIdx=i)))
             offset += block.get_time_array()[-1]
         return d
+    @property
+    def selector(self):
+        return (self.parent.selector + ' ' if self.parent is not None else '') + f'[data-pyclassname="{self.__class__.__name__}"]'
 
 
 class PUNDTemplateWF(TemplateWF):
@@ -42,12 +45,13 @@ class PUNDTemplateWF(TemplateWF):
     Cannot have children.'''
     _selector = 'pund'
     def to_dict(self):
-        return dict(_type=self.__class__.__name__,
-                    amplitude=self.amplitude, 
+        res = super().to_dict()
+        res.update( amplitude=self.amplitude, 
                     rise_time=self.rise_time, 
                     delay_time=self.delay_time, 
                     n_cycles=self.n_cycles, 
                     offset=self.offset)
+        return res
     def __init__(self, amplitude:float=1.0, rise_time:float=350e-6, delay_time:float=350e-6, n_cycles:float=4., offset:float=0.):
         super().__init__()
         self.amplitude = amplitude
@@ -110,12 +114,13 @@ class SineTemplateWF(TemplateWF):
     '''A sine waveform.
     Cannot have children.'''
     def to_dict(self):
-        return dict(_type=self.__class__.__name__,
-                    amplitude=self.amplitude,
+        res = super().to_dict()
+        res.update( amplitude=self.amplitude,
                     freq=self.freq,
                     n_cycles=self.n_cycles,
                     offset=self.offset,
                     phase=self.phase)
+        return res
     def __init__(self, amplitude:float=1.0, freq:float=1000, n_cycles:float=4., offset:float=0., phase:float=0.):
         super().__init__()
         self.amplitude = amplitude
@@ -136,9 +141,10 @@ class ConstantTemplateWF(TemplateWF):
     '''A constant waveform for a specified duration.
     Cannot have children.'''
     def to_dict(self):
-        return dict(_type=self.__class__.__name__,
-                    value=self.value,
+        res = super().to_dict()
+        res.update( value=self.value,
                     duration=self.duration)
+        return res
     def __init__(self, value:float=0, duration:float=1e-3):
         super().__init__()
         self.value = value
@@ -154,9 +160,10 @@ class ConstantTemplateWF(TemplateWF):
 class ArbitraryTemplateWF(TemplateWF):
     '''Block for holding arbitrary waveforms, more than just those predefined here.'''
     def to_dict(self):
-        return dict(_type=self.__class__.__name__,
-                    values=self.values,
+        res = super().to_dict()
+        res.update( values=self.values,
                     init_sample_rate=self.init_sample_rate)
+        return res
     def __init__(self, values:np.ndarray=[], init_sample_rate:float=1):
         super().__init__()
         self.values = np.array(values)
@@ -175,9 +182,11 @@ class ArbitraryTemplateWF(TemplateWF):
 
 # TODO
 class TriangleTemplateWF(TemplateWF):
-    pass
+    def __init__(self):
+        super().__init__()
 class SquareTemplateWF(TemplateWF):
-    pass
+    def __init__(self):
+        super().__init__()
 
 
 wf_class_dict = {cls.__name__:cls for cls in TemplateWF._get_all_subclasses()} # used for creating new waveform blocks
