@@ -100,11 +100,13 @@ $(document).ready(function() {
     // Move-up waveform block
     $('#tab-content').on('click', '.waveform-block i.move-up-waveform-block', async function() {
         console.log("move-up clicked!");
-        let $wfBlock = $(this).closest('.waveform-block');
-        let $parent = $wfBlock.parent()
-        const tabId = get_enclosing_tab_id($wfBlock);
-        const channel = $(this).closest('[data-pyclassname="AWGChannelSettings"]').find('[data-pyparam="channel"]').attr("value");
+
+        const $wfBlock = $(this).closest('.waveform-block');
+        const $awg = $wfBlock.closest('[data-pyclassname="AWGSettings"]');
+        const $parent = $wfBlock.parent(); // this should be a CollectionTemplateWF
         const blockIdx = $wfBlock.index();
+        const child_py_id = $wfBlock.data('py_id')
+        const parent_py_id = $parent.data('py_id')
         
         if (blockIdx < 1 || blockIdx >= $parent.children().length) {
             console.log("Invalid index");
@@ -113,21 +115,23 @@ $(document).ready(function() {
         
         let $upperChild = $($parent.children()[blockIdx - 1]);
         $wfBlock.insertBefore($upperChild);
-          
-        await eel.py_swap_wf_blocks(tabId, channel, blockIdx, blockIdx-1)();
 
-        await refresh_wf_preview(tabId);
+        await eel.py_move_child_elem(parent_py_id, child_py_id, +1)();
+
+        await refresh_wf_preview($awg);
     });
 
     // Move-up waveform block
     $('#tab-content').on('click', '.waveform-block i.move-down-waveform-block', async function() {
         console.log("move-down clicked!");
-        let $wfBlock = $(this).closest('.waveform-block');
-        let $parent = $wfBlock.parent()
-        const tabId = get_enclosing_tab_id($wfBlock);
-        const channel = $(this).closest('[data-pyclassname="AWGChannelSettings"]').find('[data-pyparam="channel"]').attr("value");
-        const blockIdx = $wfBlock.index();
         
+        const $wfBlock = $(this).closest('.waveform-block');
+        const $awg = $wfBlock.closest('[data-pyclassname="AWGSettings"]');
+        const $parent = $wfBlock.parent(); // this should be a CollectionTemplateWF
+        const blockIdx = $wfBlock.index();
+        const child_py_id = $wfBlock.data('py_id')
+        const parent_py_id = $parent.data('py_id')
+
         if (blockIdx < 0 || blockIdx >= $parent.children().length - 1) {
             console.log("Invalid index");
             return;
@@ -136,9 +140,9 @@ $(document).ready(function() {
         let $lowerChild = $($parent.children()[blockIdx + 1]);
         $wfBlock.insertAfter($lowerChild);
           
-        await eel.py_swap_wf_blocks(tabId, channel, blockIdx, blockIdx+1)();
+        await eel.py_move_child_elem(parent_py_id, child_py_id, -1)();
 
-        await refresh_wf_preview(tabId);
+        await refresh_wf_preview($awg);
     });
 
     // Upload waveform

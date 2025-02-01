@@ -91,10 +91,13 @@ def py_new_wf_block(parent_py_id:int, wfType:str):
     collection.add_child( newblock )
     return newblock.py_id
 @eel.expose
-def py_swap_wf_blocks(parent_py_id:int, blockIdx0:int, blockIdx1:int):
-    collection = state.find_by_py_id(parent_py_id)
-    collection.swap_children(blockIdx0, blockIdx1)
-
+def py_move_child_elem(parent_py_id:int, child_py_id:int, shift:int):
+    '''Rearrange order of children'''
+    collection = state.find_by_py_id(int(parent_py_id))
+    child = state.find_by_py_id(int(child_py_id))
+    idx = collection._children.index(child)
+    collection[idx], collection[idx-int(shift)] = collection[idx-int(shift)], collection[idx]
+    
 @eel.expose
 def py_get_wf_block_settings(py_id:int):
     block = state.find_by_py_id(py_id)
